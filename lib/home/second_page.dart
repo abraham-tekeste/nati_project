@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'controllers/counter_provider.dart';
-import 'home_page.dart';
+import 'controllers/counter_notifier.dart';
 
 class SecondPage extends ConsumerWidget {
   const SecondPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final counter = ref.watch(counterProvider(-15));
+    final counter = ref.watch(counterProvider('-15'));
 
     return Scaffold(
       appBar: AppBar(
@@ -24,11 +23,10 @@ class SecondPage extends ConsumerWidget {
           )),
           ElevatedButton(
             onPressed: () {
-              ref.read(counterProvider(-15).notifier).state += 3;
+              ref.read(counterProvider('-15').notifier).increment(3);
             },
             child: const Text("Increment"),
           ),
-          const CounterFutureText(),
         ],
       ),
     );

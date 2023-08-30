@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final counterProvider = StateProvider.family<int, int>((ref, arg) {
-  return 0;
-});
+// final counterProvider = StateProvider.family<int, int>((ref, arg) {
+//   return 0;
+// });
 
 final counterFutureProvider = FutureProvider<int>((ref) async {
   return calculate();
