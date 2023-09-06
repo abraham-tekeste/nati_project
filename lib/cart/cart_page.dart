@@ -6,7 +6,7 @@ import 'package:nati_project/home/constants/colors.dart';
 
 import '../home/model/product.dart';
 import 'controllers/cart_provider.dart';
-
+// this is comment for test github
 class CartPage extends ConsumerWidget {
   const CartPage({super.key});
 
