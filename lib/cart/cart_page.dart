@@ -6,6 +6,7 @@ import 'package:nati_project/home/constants/colors.dart';
 
 import '../home/model/product.dart';
 import 'controllers/cart_provider.dart';
+
 // this is comment for test github
 class CartPage extends ConsumerWidget {
   const CartPage({super.key});
@@ -24,9 +25,10 @@ class CartPage extends ConsumerWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [
-            ...cartProducts.map((e) => CartProductTile(e)).toList(),
-          ],
+          children: List.generate(
+            cartProducts.length,
+            (i) => CartProductTile(cartProducts[i], i),
+          ),
         ),
       ),
       persistentFooterButtons: [
@@ -34,10 +36,12 @@ class CartPage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             const Text("Total:"),
-            const SizedBox(width: 100,),
+            const SizedBox(
+              width: 100,
+            ),
             Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color:Colors.deepPurple.shade50),
+                decoration: BoxDecoration(color: Colors.deepPurple.shade50),
                 child: Text("${ref.read(priceProvider.notifier).state}")),
           ],
         ),
@@ -47,9 +51,10 @@ class CartPage extends ConsumerWidget {
 }
 
 class CartProductTile extends ConsumerWidget {
-  const CartProductTile(this.product, {super.key});
+  const CartProductTile(this.product, this.index, {super.key});
 
   final Product product;
+  final int index;
 
   @override
   Widget build(BuildContext context, ref) {
@@ -61,30 +66,16 @@ class CartProductTile extends ConsumerWidget {
         subtitle: Text(product.price.toString()),
         trailing: IconButton(
           onPressed: () async {
-            //final old = ref.read(cartProvider);
-            //adding prices
-
-            //List<Product> newProducts = [];
-
-            // for (var element in old) {
-            //   if (element.id != product.id) newProducts.add(element);
-            // }
-            ref.read(priceProvider.notifier).state=ref.read(priceProvider.notifier).state-product.price;
-            //print(ref.read(priceProvider.notifier).state);
-            //ref.read(cartProvider.notifier).state = newProducts;
-
             ref.read(cartProvider.notifier).state = [
-              ...ref.read(cartProvider.notifier).state
-                ..removeWhere((element) {
-                  return element.id == product.id;
-                })
+              ...ref.read(cartProvider.notifier).state..removeAt(index)
             ];
+
+            ref.read(priceProvider.notifier).state -= product.price;
           },
           icon: const Icon(Icons.remove),
         ),
         //tileColor: Theme.of(context).colorScheme.surfaceVariant,
       ),
     );
-
   }
 }

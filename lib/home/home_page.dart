@@ -33,7 +33,9 @@ class HomePage extends ConsumerWidget {
       body: Column(
         children: [
           searchBox(),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           Center(
             child: productsAsyc.when(
               data: (products) {
@@ -74,7 +76,8 @@ class ProductTile extends ConsumerWidget {
           onPressed: () {
             ref.read(cartProvider.notifier).state.add(product);
             //final priceT=ref.read(priceProvider);
-            ref.read(priceProvider.notifier).state=ref.read(priceProvider.notifier).state+product.price;
+
+            ref.read(priceProvider.notifier).state += product.price;
             //print(ref.read(priceProvider.notifier).state);
           },
           icon: const Icon(Icons.add),
@@ -85,13 +88,11 @@ class ProductTile extends ConsumerWidget {
   }
 }
 
-
-
 Widget searchBox() {
   return Container(
     decoration: BoxDecoration(
         color: Colors.white70, borderRadius: BorderRadius.circular(20.0)),
-    child:  const TextField(
+    child: const TextField(
       onChanged: null,
       decoration: InputDecoration(
           hintText: "search",
