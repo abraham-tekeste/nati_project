@@ -1,11 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
   final String name, id, image;
   final double price;
 
   Product({
     required this.name,
-    required this.id,
+    this.id = '',
     required this.price,
     required this.image,
   });
+
+  factory Product.fromFirestore(
+      QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final json = snapshot.data();
+
+    return Product(
+      id: snapshot.id,
+      name: json['name'] ?? 'Unknown product',
+      price: double.tryParse('${json['price']}') ?? 0,
+      image: json['image'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'price': price,
+      'image': image,
+    };
+  }
 }

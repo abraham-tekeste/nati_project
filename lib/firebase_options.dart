@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '950357741917',
     projectId: 'nati-project-1b8a7',
     storageBucket: 'nati-project-1b8a7.appspot.com',
-    iosClientId: '950357741917-0icho1d1615mus19tgc809fnkkqob4rc.apps.googleusercontent.com',
+    iosClientId:
+        '950357741917-0icho1d1615mus19tgc809fnkkqob4rc.apps.googleusercontent.com',
     iosBundleId: 'com.example.natiProject',
   );
 }
