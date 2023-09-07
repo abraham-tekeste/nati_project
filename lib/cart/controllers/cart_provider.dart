@@ -5,3 +5,8 @@ final cartProvider = StateProvider<List<Product>>((ref) {
   // 0xghgffdsjhbkjnjnoht86tk
   return [];
 });
+
+final priceProvider= StateProvider<double>((ref){
+  return 0;
+
+});
