@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "950357741917",
+    "project_id": "nati-project-1b8a7",
+    "storage_bucket": "nati-project-1b8a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950357741917:android:1ec5461a35c4256a7f98b4",
+        "android_client_info": {
+          "package_name": "com.example.nati_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950357741917-usng0i9k2rnhgb6havl0q5cthb369vbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADdM2GG4nbYQ_6TNsAecUocl5RVrWfDD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950357741917-usng0i9k2rnhgb6havl0q5cthb369vbp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
