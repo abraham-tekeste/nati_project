@@ -3,17 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/product.dart';
 
-final productsProvider = FutureProvider<List<Product>>((ref) async {
-  final data = await FirebaseFirestore.instance.collection('products').get();
-  final result = data.docs.map((d) => Product.fromFireStore(d)).toList();
-
-  ///--
-  ///
-  // final formObj = Product(name: 'name', price: 12, image: 'image');
-
-  // await FirebaseFirestore.instance.collection('products').add(formObj.toFirestore());
-
-  ///
-  ///
-  return result;
+final productsProvider = StreamProvider<List<Product>>((ref) {
+  return FirebaseFirestore.instance
+      .collection('products')
+      .snapshots()
+      .map((s) => s.docs.map((d) => Product.fromFireStore(d)).toList());
 });
+
+// final productsProvider = StreamProvider<List<Product>>((ref) async* {
+//   await for (var data
+//       in FirebaseFirestore.instance.collection('products').snapshots()) {
+//     yield data.docs.map((d) => Product.fromFireStore(d)).toList();
+//   }
+// });

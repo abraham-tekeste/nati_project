@@ -1,20 +1,41 @@
-//import 'dart:html';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
 import 'package:nati_project/home/controllers/products_provider.dart';
 
 import '../cart/cart_page.dart';
+import '../product_mngt/screens/add_product_page.dart';
 import 'constants/colors.dart';
 import 'model/product.dart';
 
-class HomePage extends ConsumerWidget {
-  HomePage({super.key});
+class ProductSearch extends SearchDelegate {
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [IconButton(onPressed: () {}, icon: const Icon(Icons.cancel))];
+  }
 
-  final productNameController = TextEditingController();
-  final productPriceController = TextEditingController();
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.arrow_back));
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container();
+  }
+}
+
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
@@ -28,11 +49,25 @@ class HomePage extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
+              showSearch(context: context, delegate: ProductSearch());
+            },
+            icon: const Icon(Icons.search),
+          ),
+          IconButton(
+            onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const CartPage(),
               ));
             },
             icon: const Icon(Icons.shopping_cart),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const AddProductPage(),
+              ));
+            },
+            icon: const Icon(Icons.add),
           )
         ],
       ),
@@ -62,15 +97,6 @@ class HomePage extends ConsumerWidget {
             ),
             const SizedBox(
               height: 20,
-            ),
-            MyTextField("product Name", productNameController),
-            const SizedBox(
-              height: 30,
-            ),
-            MyTextField("price", productPriceController),
-            SubmitButton(
-              productNameController: productNameController,
-              productPriceController: productPriceController,
             ),
           ],
         ),
@@ -124,60 +150,3 @@ Widget searchBox() {
     ),
   );
 }
-
-class MyTextField extends StatelessWidget {
-  final String productlabel;
-  final TextEditingController myController;
-
-  //final String labelName;
-
-  const MyTextField(this.productlabel, this.myController, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: myController,
-      decoration: InputDecoration(
-        labelText: productlabel,
-      ),
-    );
-  }
-}
-
-class SubmitButton extends StatelessWidget {
-  const SubmitButton(
-      {super.key,
-      required this.productNameController,
-      required this.productPriceController});
-
-  final TextEditingController productNameController;
-  final TextEditingController productPriceController;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(minimumSize: const Size(200, 50)),
-      onPressed: () {
-        final name = productNameController.text;
-        final price = double.parse(productPriceController.text);
-        createProductToFirebase(name: name, price: price);
-      },
-      child: Text(
-        "submit form".toUpperCase(),
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Future createProductToFirebase(
-      {required String name, required double price}) async {
-      //print("i was called");
-      //reference to
-    final docProduct = FirebaseFirestore.instance.collection('products').doc();
-    final product = Product(name: name, price: price, image: "",id: "121221");
-    final json = product.toFireStore();
-    await docProduct.set(json);
-  }
-}
-
-//...cartProducts.map((e) => CartProductTile(e)).toList(),
