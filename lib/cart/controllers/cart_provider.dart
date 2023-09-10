@@ -8,3 +8,21 @@ final cartProvider = StateProvider<List<Product>>((ref) {
 final priceProvider = StateProvider<double>((ref) {
   return 0;
 });
+
+// final arekiCounterProvider = StateProvider<double>((ref) {
+//   return 0;
+// });
+//
+// final kognachCounterProvider = StateProvider<double>((ref) {
+//   return 0;
+// });
+//
+// final arekiNayAsmaraCounterProvider = StateProvider<double>((ref) {
+//   return 0;
+// });
+//
+// final jinCounterProvider = StateProvider<double>((ref) {
+//   return 0;
+// });
+
+

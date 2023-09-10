@@ -5,7 +5,7 @@ import '../model/product.dart';
 
 final productsProvider = FutureProvider<List<Product>>((ref) async {
   final data = await FirebaseFirestore.instance.collection('products').get();
-  final result = data.docs.map((d) => Product.fromFirestore(d)).toList();
+  final result = data.docs.map((d) => Product.fromFireStore(d)).toList();
 
   ///--
   ///

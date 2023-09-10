@@ -1,3 +1,6 @@
+//import 'dart:html';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
@@ -8,7 +11,10 @@ import 'constants/colors.dart';
 import 'model/product.dart';
 
 class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+
+  final productNameController = TextEditingController();
+  final productPriceController = TextEditingController();
 
   @override
   Widget build(BuildContext context, ref) {
@@ -30,30 +36,44 @@ class HomePage extends ConsumerWidget {
           )
         ],
       ),
-      body: Column(
-        children: [
-          searchBox(),
-          const SizedBox(
-            height: 10,
-          ),
-          Center(
-            child: productsAsyc.when(
-              data: (products) {
-                return Column(
-                  children: products
-                      .map(
-                        (e) => ProductTile(
-                          product: e,
-                        ),
-                      )
-                      .toList(),
-                );
-              },
-              error: (error, stackTrace) => Text(error.toString()),
-              loading: () => const CircularProgressIndicator(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            searchBox(),
+            const SizedBox(
+              height: 10,
             ),
-          ),
-        ],
+            Center(
+              child: productsAsyc.when(
+                data: (products) {
+                  return Column(
+                    children: products
+                        .map(
+                          (e) => ProductTile(
+                            product: e,
+                          ),
+                        )
+                        .toList(),
+                  );
+                },
+                error: (error, stackTrace) => Text(error.toString()),
+                loading: () => const CircularProgressIndicator(),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            MyTextField("product Name", productNameController),
+            const SizedBox(
+              height: 30,
+            ),
+            MyTextField("price", productPriceController),
+            SubmitButton(
+              productNameController: productNameController,
+              productPriceController: productPriceController,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -76,7 +96,6 @@ class ProductTile extends ConsumerWidget {
           onPressed: () {
             ref.read(cartProvider.notifier).state.add(product);
             //final priceT=ref.read(priceProvider);
-
             ref.read(priceProvider.notifier).state += product.price;
             //print(ref.read(priceProvider.notifier).state);
           },
@@ -105,4 +124,60 @@ Widget searchBox() {
     ),
   );
 }
+
+class MyTextField extends StatelessWidget {
+  final String productlabel;
+  final TextEditingController myController;
+
+  //final String labelName;
+
+  const MyTextField(this.productlabel, this.myController, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: myController,
+      decoration: InputDecoration(
+        labelText: productlabel,
+      ),
+    );
+  }
+}
+
+class SubmitButton extends StatelessWidget {
+  const SubmitButton(
+      {super.key,
+      required this.productNameController,
+      required this.productPriceController});
+
+  final TextEditingController productNameController;
+  final TextEditingController productPriceController;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(minimumSize: const Size(200, 50)),
+      onPressed: () {
+        final name = productNameController.text;
+        final price = double.parse(productPriceController.text);
+        createProductToFirebase(name: name, price: price);
+      },
+      child: Text(
+        "submit form".toUpperCase(),
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Future createProductToFirebase(
+      {required String name, required double price}) async {
+      //print("i was called");
+      //reference to
+    final docProduct = FirebaseFirestore.instance.collection('products').doc();
+    final product = Product(name: name, price: price, image: "",id: "121221");
+    final json = product.toFireStore();
+    await docProduct.set(json);
+  }
+}
+
 //...cartProducts.map((e) => CartProductTile(e)).toList(),

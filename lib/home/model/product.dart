@@ -11,8 +11,7 @@ class Product {
     required this.image,
   });
 
-  factory Product.fromFirestore(
-      QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
+  factory Product.fromFireStore(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
     final json = snapshot.data();
 
     return Product(
@@ -23,8 +22,9 @@ class Product {
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toFireStore() {
     return {
+      'id': id,
       'name': name,
       'price': price,
       'image': image,

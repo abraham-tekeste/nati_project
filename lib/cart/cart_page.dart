@@ -1,4 +1,4 @@
-import 'dart:developer';
+//import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +15,7 @@ class CartPage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final cartProducts = ref.watch(cartProvider);
 
-    log('Loading');
+    //log('Loading');
 
     return Scaffold(
       backgroundColor: tdBGColor,
@@ -25,12 +25,15 @@ class CartPage extends ConsumerWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: List.generate(
+          children:
+            List.generate(
             cartProducts.length,
             (i) => CartProductTile(cartProducts[i], i),
           ),
         ),
       ),
+
+
       persistentFooterButtons: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
