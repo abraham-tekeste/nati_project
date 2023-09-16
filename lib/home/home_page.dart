@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
@@ -5,34 +6,9 @@ import 'package:nati_project/home/controllers/products_provider.dart';
 
 import '../cart/cart_page.dart';
 import '../product_mngt/screens/add_product_page.dart';
+import '../search/product_search_delegate.dart';
 import 'constants/colors.dart';
 import 'model/product.dart';
-
-class ProductSearch extends SearchDelegate {
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [IconButton(onPressed: () {}, icon: const Icon(Icons.cancel))];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: const Icon(Icons.arrow_back));
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return Container();
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return Container();
-  }
-}
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
