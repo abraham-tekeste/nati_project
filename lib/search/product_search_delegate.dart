@@ -98,7 +98,6 @@ final searchProvider =
       Node(
         protocol,
         host,
-
         // port: 9108,
       ),
     },
@@ -115,8 +114,8 @@ final searchProvider =
     // 'sort_by': 'num_employees:desc'
   };
 
-  var result = convertKeysToStrings(
-      await client.collection('products').documents.search(searchParameters));
+  var result =
+      await client.collection('products').documents.search(searchParameters);
 
   log(json.decode(result.toString())['hits']);
   return [];
