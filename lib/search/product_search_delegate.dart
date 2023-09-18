@@ -115,9 +115,14 @@ final searchProvider =
     // 'sort_by': 'num_employees:desc'
   };
 
-  var result = convertKeysToStrings(
-      await client.collection('products').documents.search(searchParameters));
+  // var result = convertKeysToStrings(
+  //     await client.collection('products').documents.search(searchParameters));
+  var result=await client.collection('products').documents.search(searchParameters);
+  //print("************************************");
+  //log(json.decode(result.toString())['hits']);
+  log(json.encode(result));
 
-  log(json.decode(result.toString())['hits']);
-  return [];
-});
+  final hits = json.decode(result.toString())['hits'];
+  final products = hits.map((hit) => Product.fromFireStore(hit)).toList();
+  return products;
+    });
