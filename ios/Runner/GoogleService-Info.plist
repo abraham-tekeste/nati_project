@@ -2,22 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>950357741917-0icho1d1615mus19tgc809fnkkqob4rc.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.950357741917-0icho1d1615mus19tgc809fnkkqob4rc</string>
 	<key>API_KEY</key>
-	<string>AIzaSyANo9ZbUPGOMp9j1Iudye7MrEUkzglyfWw</string>
+	<string>AIzaSyBJeLMiU979ZTglPPbmEcWc6n_gXESvXg8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>950357741917</string>
+	<string>1043816678539</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.natiProject</string>
 	<key>PROJECT_ID</key>
-	<string>nati-project-1b8a7</string>
+	<string>natu-prod</string>
 	<key>STORAGE_BUCKET</key>
-	<string>nati-project-1b8a7.appspot.com</string>
+	<string>natu-prod.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:950357741917:ios:1cdeaaf88fbfd8cb7f98b4</string>
+	<string>1:1043816678539:ios:a6470ee903b72ddcc2008e</string>
 </dict>
 </plist>

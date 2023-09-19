@@ -50,21 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyADdM2GG4nbYQ_6TNsAecUocl5RVrWfDD0',
-    appId: '1:950357741917:android:1ec5461a35c4256a7f98b4',
-    messagingSenderId: '950357741917',
-    projectId: 'nati-project-1b8a7',
-    storageBucket: 'nati-project-1b8a7.appspot.com',
+    apiKey: 'AIzaSyC4H7fsdJkO5s-znmhAKpoLNb4WqPqL9Nc',
+    appId: '1:1043816678539:android:de6f9bcb1bade4a4c2008e',
+    messagingSenderId: '1043816678539',
+    projectId: 'natu-prod',
+    storageBucket: 'natu-prod.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyANo9ZbUPGOMp9j1Iudye7MrEUkzglyfWw',
-    appId: '1:950357741917:ios:1cdeaaf88fbfd8cb7f98b4',
-    messagingSenderId: '950357741917',
-    projectId: 'nati-project-1b8a7',
-    storageBucket: 'nati-project-1b8a7.appspot.com',
-    iosClientId:
-        '950357741917-0icho1d1615mus19tgc809fnkkqob4rc.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBJeLMiU979ZTglPPbmEcWc6n_gXESvXg8',
+    appId: '1:1043816678539:ios:a6470ee903b72ddcc2008e',
+    messagingSenderId: '1043816678539',
+    projectId: 'natu-prod',
+    storageBucket: 'natu-prod.appspot.com',
     iosBundleId: 'com.example.natiProject',
   );
 }

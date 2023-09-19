@@ -39,8 +39,8 @@ dependencies:
   cloud_firestore: ^4.9.1
   flutter_hooks: ^0.20.1
   hooks_riverpod: ^2.4.0
-  typesense: ^0.4.0
   cloud_functions: ^4.4.0
+  algolia: ^1.1.2
 
 dev_dependencies:
   flutter_test:

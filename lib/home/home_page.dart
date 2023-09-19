@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nati_project/app.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
 import 'package:nati_project/home/controllers/products_provider.dart';
 
@@ -23,6 +27,28 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: tdBGColor,
         actions: [
+          IconButton(
+            onPressed: () async {
+              try {
+                final result = await FirebaseFunctions.instance
+                    .httpsCallable(
+                      'callableFun',
+                      options: HttpsCallableOptions(
+                        timeout: const Duration(seconds: 5),
+                      ),
+                    )
+                    .call();
+
+                log('${result.data}');
+                // Process the result as needed
+                log('Done calling');
+              } catch (e) {
+                log('Error calling Firebase Function: $e');
+                // Handle the error appropriately
+              }
+            },
+            icon: const Icon(Icons.access_alarm),
+          ),
           IconButton(
             onPressed: () {
               showSearch(context: context, delegate: ProductSearch());
