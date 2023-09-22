@@ -1,8 +1,13 @@
+import 'dart:developer';
+
+import 'package:algoliasearch/algoliasearch.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/home/home_page.dart';
 import 'package:nati_project/home/model/product.dart';
+
+import 'controllers/search_provider.dart';
 
 class ProductSearch extends SearchDelegate {
   @override
@@ -37,26 +42,24 @@ class SearchResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchAsync = ref.watch(searchProvider(searchTerm));
+    log('Refreshing');
+    return FutureBuilder<List<Product>>(
+      future: ref.read(searchProvider.notifier).searchFromAlgolia(searchTerm),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator.adaptive();
+        }
 
-    return searchAsync.when(
-      data: (products) {
+        if (snapshot.hasError) {
+          return Text(snapshot.error!.toString());
+        }
+
+        final data = snapshot.data;
+
         return ListView(
-          children: [for (var p in products) ProductTile(product: p)],
+          children: [for (var p in data!) ProductTile(product: p)],
         );
       },
-      error: (error, stackTrace) => Text(error.toString()),
-      loading: () => const CircularProgressIndicator.adaptive(),
     );
   }
 }
-
-final searchProvider =
-    FutureProvider.family<List<Product>, String>((ref, arg) async {
-  final result = await FirebaseFirestore.instance
-      .collection('products')
-      .where('name', isEqualTo: arg)
-      .get();
-
-  return result.docs.map((e) => Product.fromFireStore(e)).toList();
-});

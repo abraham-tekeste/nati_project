@@ -1,10 +1,8 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nati_project/app.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
 import 'package:nati_project/home/controllers/products_provider.dart';
 
