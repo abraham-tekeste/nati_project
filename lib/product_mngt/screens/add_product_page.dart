@@ -96,7 +96,7 @@ class SubmitButton extends ConsumerWidget {
       {required String name, required double price}) async {
     //print("i was called");
     //reference to
-    final product = Product(name: name, price: price, image: "");
+    final product = Product(name: name, price: price, image: "assets/images/areki.jpeg");
     final json = product.toFireStore();
 
     FirebaseFirestore.instance.collection('products').add(json);
