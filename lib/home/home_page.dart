@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
+import 'package:nati_project/categories_mngmt/category.dart';
 import 'package:nati_project/home/controllers/products_provider.dart';
 
 import '../cart/cart_page.dart';
@@ -26,25 +27,9 @@ class HomePage extends ConsumerWidget {
         backgroundColor: tdBGColor,
         actions: [
           IconButton(
-            onPressed: () async {
-              try {
-                final result = await FirebaseFunctions.instance
-                    .httpsCallable(
-                      'callableFun',
-                      options: HttpsCallableOptions(
-                        timeout: const Duration(seconds: 5),
-                      ),
-                    )
-                    .call();
-
-                log('${result.data}');
-                // Process the result as needed
-                log('Done calling');
-              } catch (e) {
-                log('Error calling Firebase Function: $e');
-                // Handle the error appropriately
-              }
-            },
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoryManagement(),));
+    },
             icon: const Icon(Icons.access_alarm),
           ),
           IconButton(

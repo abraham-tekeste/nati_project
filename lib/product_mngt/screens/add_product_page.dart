@@ -27,7 +27,7 @@ class AddProductPage extends StatelessWidget {
   }
 }
 
-final productNameControllerProvider =
+final textFieldControllerProvider =
     StateProvider.autoDispose<TextEditingController>((ref) {
   return TextEditingController();
 });
@@ -57,7 +57,7 @@ class ProductNameField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final productNameController = ref.watch(productNameControllerProvider);
+    final productNameController = ref.watch(textFieldControllerProvider);
 
     return TextFormField(
       controller: productNameController,
@@ -75,7 +75,7 @@ class SubmitButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final productNameController = ref.watch(productNameControllerProvider);
+    final productNameController = ref.watch(textFieldControllerProvider);
     final productPriceController = ref.watch(productPriceControllerProvider);
 
     return OutlinedButton(

@@ -41,12 +41,18 @@ dependencies:
   hooks_riverpod: ^2.4.0
   cloud_functions: ^4.4.0
   algoliasearch: 0.2.3
+  flutter_native_splash: ^2.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  flutter_native_splash: ^2.3.2
+
+flutter_native_splash:
+  color: "#f5cb42"
+  image: assets/images/flutter1.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -61,3 +67,4 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/areki.jpeg
+    - assets/images/flutter1.png
