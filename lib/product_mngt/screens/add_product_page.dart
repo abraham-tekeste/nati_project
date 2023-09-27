@@ -10,7 +10,8 @@ class AddProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add product')),
+      appBar: AppBar(title: const Text('Add product'),
+      elevation: 0.0,),
       body: const SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(

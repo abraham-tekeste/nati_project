@@ -20,7 +20,8 @@ class CartPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: tdBGColor,
       appBar: AppBar(
-        backgroundColor: tdBGColor,
+        elevation: 0.0,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Cart'),
       ),
       body: SingleChildScrollView(

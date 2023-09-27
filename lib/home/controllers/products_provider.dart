@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../categories_mngmt/models/category_model.dart';
 import '../model/product.dart';
 
-final productsProvider = StreamProvider<List<Product>>((ref) {
+final productsProvider = StreamProvider.family<List<Product>,String>((ref,arg) {
   return FirebaseFirestore.instance
       .collection('products')
+      .where('categoryId', isEqualTo: arg)
       .snapshots()
       .map((s) => s.docs.map((d) => Product.fromFireStore(d)).toList());
 });
