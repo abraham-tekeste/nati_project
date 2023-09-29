@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'home/home_page.dart';
+import 'home/main_nav.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -15,7 +15,7 @@ class App extends StatelessWidget {
         //accentColor: Color(0xFFFEF9EB),
         //hintColor: const Color(0xFFFEF9EB),
       ),
-      home: const HomePage(),
+      home: const MainNav(),
     );
   }
 }

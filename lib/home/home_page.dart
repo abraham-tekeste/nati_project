@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:nati_project/cart/controllers/cart_provider.dart';
-import 'package:nati_project/categories_mngmt/category.dart';
 import 'package:nati_project/categories_mngmt/controllers/category_provider.dart';
 // import 'package:nati_project/home/controllers/products_provider.dart';
 
 import '../cart/cart_page.dart';
 import '../categories_mngmt/models/category_model.dart';
-import '../product_mngt/screens/add_product_page.dart';
 import '../product_mngt/screens/display_products_page.dart';
 import '../search/product_search_delegate.dart';
 import 'constants/colors.dart';
@@ -24,23 +22,15 @@ class HomePage extends ConsumerWidget {
     //final totalPrices=ref.watch(priceProvider);
 
     return Scaffold(
-      //backgroundColor: tdBGColor,
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0.0,
-        title: const Text("Categories",style: TextStyle(fontSize: 28.0,fontWeight: FontWeight.bold),),
+        title: const Text(
+          "Categories",
+          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+        ),
         //backgroundColor: tdBGColor,
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CategoryManagement(),
-                  ));
-            },
-            icon: const Icon(Icons.access_alarm),
-          ),
           IconButton(
             onPressed: () {
               showSearch(context: context, delegate: ProductSearch());
@@ -55,14 +45,6 @@ class HomePage extends ConsumerWidget {
             },
             icon: const Icon(Icons.shopping_cart),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const AddProductPage(),
-              ));
-            },
-            icon: const Icon(Icons.add),
-          )
         ],
       ),
       body: Column(
@@ -71,7 +53,7 @@ class HomePage extends ConsumerWidget {
             child: Container(
               height: 500,
               decoration: const BoxDecoration(
-                color: Colors.white,//Color(0xFFFEF9EB),
+                color: Colors.white, //Color(0xFFFEF9EB),
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(30),
                     topLeft: Radius.circular(30)),
@@ -94,34 +76,6 @@ class HomePage extends ConsumerWidget {
                     })
                   ],
                 ),
-                // child: Column(
-                //   children: [
-                //     searchBox(),
-                //     const SizedBox(
-                //       height: 10,
-                //     ),
-                //     Center(
-                //       child: productsAsyc.when(
-                //         data: (products) {
-                //           return Column(
-                //             children: products
-                //                 .map(
-                //                   (e) => ProductTile(
-                //                     product: e,
-                //                   ),
-                //                 )
-                //                 .toList(),
-                //           );
-                //         },
-                //         error: (error, stackTrace) => Text(error.toString()),
-                //         loading: () => const CircularProgressIndicator(),
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       height: 20,
-                //     ),
-                //   ],
-                // ),
               ),
             ),
           ),
@@ -130,6 +84,35 @@ class HomePage extends ConsumerWidget {
     );
   }
 }
+
+// child: Column(
+//   children: [
+//     searchBox(),
+//     const SizedBox(
+//       height: 10,
+//     ),
+//     Center(
+//       child: productsAsyc.when(
+//         data: (products) {
+//           return Column(
+//             children: products
+//                 .map(
+//                   (e) => ProductTile(
+//                     product: e,
+//                   ),
+//                 )
+//                 .toList(),
+//           );
+//         },
+//         error: (error, stackTrace) => Text(error.toString()),
+//         loading: () => const CircularProgressIndicator(),
+//       ),
+//     ),
+//     const SizedBox(
+//       height: 20,
+//     ),
+//   ],
+// ),
 
 class ProductTile extends ConsumerWidget {
   const ProductTile({super.key, required this.product});
@@ -145,8 +128,8 @@ class ProductTile extends ConsumerWidget {
       child: Column(
         children: [
           Container(
-              width: 400,
-              height: 200,
+            width: 400,
+            height: 200,
             decoration: BoxDecoration(
               image: DecorationImage(image: AssetImage(product.image)),
             ),
@@ -162,20 +145,21 @@ class ProductTile extends ConsumerWidget {
           ),
           ListTile(
             leading: Text(
-                "${product.price}",
+              "${product.price}",
               style: const TextStyle(fontSize: 16),
             ),
-            trailing:  IconButton(
+            trailing: IconButton(
               onPressed: () {
                 ref.read(cartProvider.notifier).state.add(product);
                 //final priceT=ref.read(priceProvider);
                 ref.read(priceProvider.notifier).state += product.price;
                 //print(ref.read(priceProvider.notifier).state);
               },
-              icon: const Icon(Icons.add_shopping_cart_outlined,),
+              icon: const Icon(
+                Icons.add_shopping_cart_outlined,
+              ),
             ),
-
-            ),
+          ),
         ],
       ),
     );

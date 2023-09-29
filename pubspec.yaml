@@ -41,7 +41,6 @@ dependencies:
   hooks_riverpod: ^2.4.0
   cloud_functions: ^4.4.0
   algoliasearch: 0.2.3
-  flutter_native_splash: ^2.3.2
 
 dev_dependencies:
   flutter_test:
