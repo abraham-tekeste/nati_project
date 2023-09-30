@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/product.dart';
 
-final productsProvider =
+final categoryProductsProvider =
     StreamProvider.family<List<Product>, String>((ref, arg) {
   return FirebaseFirestore.instance
       .collection('products')
@@ -11,6 +11,15 @@ final productsProvider =
       .snapshots()
       .map((s) => s.docs.map((d) => Product.fromFireStore(d)).toList());
 });
+
+final productsProvider = StreamProvider<List<Product>>((ref) {
+  return FirebaseFirestore.instance
+      .collection('products')
+      .snapshots()
+      .map((s) => s.docs.map((d) => Product.fromFireStore(d)).toList());
+});
+
+
 
 
 
