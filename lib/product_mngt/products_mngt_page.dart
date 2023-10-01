@@ -13,40 +13,60 @@ class ProductsMngtPage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final productsAsync = ref.watch(productsProvider);
     return Scaffold(
-        body: productsAsync.when(
-            data: (products) {
-              return ListView.builder(
-                itemCount: products.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(products[index].name),
-                    subtitle: Text(products[index].price.toString()),
-                    trailing: PopupMenuButton(
-                      onSelected: (value) {
-                        if (value == "set_category") {
-                          showModalBottomSheet(
-                              context: context,
-                              builder: (context) =>
-                                  CategorySelector(id: products[index].id));
-                        }
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          const PopupMenuItem(
-                            value: "set_category",
-                            child: Text("Set category"),
-                          )
-                        ];
-                      },
-                    ),
-                  );
-                },
-              );
-            },
-            error: (error, stackTrace) => Text("$error"),
-            loading: () {
-              return const CircularProgressIndicator();
-            }));
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          elevation: 0.0,
+          centerTitle: true,
+          title: const Text(
+            "PRODUCTS MNGT",
+            style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+          ),
+        ),
+        body: Container(
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            color: Colors.white, //Color(0xFFFEF9EB),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          ),
+          child: productsAsync.when(
+              data: (products) {
+                return ListView.builder(
+                  itemCount: products.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: const CircleAvatar(
+                          backgroundImage:
+                              AssetImage("assets/images/areki.jpeg")),
+                      title: Text(products[index].name),
+                      subtitle: Text(products[index].price.toString()),
+                      trailing: PopupMenuButton(
+                        onSelected: (value) {
+                          if (value == "set_category") {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (context) =>
+                                    CategorySelector(id: products[index].id));
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            const PopupMenuItem(
+                              value: "set_category",
+                              child: Text("Set category"),
+                            )
+                          ];
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+              error: (error, stackTrace) => Text("$error"),
+              loading: () {
+                return const CircularProgressIndicator();
+              }),
+        ));
   }
 }
 
