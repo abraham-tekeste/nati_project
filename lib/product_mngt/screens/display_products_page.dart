@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/home/home_page.dart';
+
 import '../../home/controllers/products_provider.dart';
 
 class DisplayProductsPage extends ConsumerWidget {

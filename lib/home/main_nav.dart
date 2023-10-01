@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nati_project/home/categories_page.dart';
 
 import 'home_page.dart';
 import 'menu_page.dart';
@@ -20,6 +21,7 @@ class MainNav extends ConsumerWidget {
         index: pageIndex,
         children: const [
           HomePage(),
+          CategoriesPage(),
           MenuPage(),
         ],
       ),
@@ -32,6 +34,10 @@ class MainNav extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category_outlined),
+            label: 'Categories',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu),

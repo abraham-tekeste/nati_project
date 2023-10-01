@@ -25,7 +25,10 @@ class CategoryManagement extends ConsumerWidget {
                 title: Text(category.name),
                 trailing: IconButton(
                   onPressed: () {
-                    FirebaseFirestore.instance.collection("categories").doc(category.id).delete();
+                    FirebaseFirestore.instance
+                        .collection("categories")
+                        .doc(category.id)
+                        .delete();
                   },
                   icon: const Icon(Icons.remove),
                 ),

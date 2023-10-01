@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:nati_project/cart/controllers/cart_provider.dart';
 import 'package:nati_project/categories_mngmt/controllers/category_provider.dart';
+import 'package:nati_project/home/controllers/products_provider.dart';
 // import 'package:nati_project/home/controllers/products_provider.dart';
 
 import '../cart/cart_page.dart';
@@ -19,100 +19,79 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     //final productsAsyc = ref.watch(productsProvider);
     final categoryAsync = ref.watch(categoriesProvider);
+
     //final totalPrices=ref.watch(priceProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        elevation: 0.0,
-        title: const Text(
-          "Categories",
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
-        ),
-        //backgroundColor: tdBGColor,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showSearch(context: context, delegate: ProductSearch());
-            },
-            icon: const Icon(Icons.search),
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          elevation: 0.0,
+          centerTitle: true,
+          title: const Text(
+            "HOME",
+            style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const CartPage(),
-              ));
-            },
-            icon: const Icon(Icons.shopping_cart),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              height: 500,
-              decoration: const BoxDecoration(
-                color: Colors.white, //Color(0xFFFEF9EB),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(30),
-                    topLeft: Radius.circular(30)),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    categoryAsync.when(data: (categories) {
-                      return Column(
-                        children: categories
-                            .map((category) => CategoryTile(
-                                  category: category,
-                                ))
-                            .toList(),
-                      );
-                    }, error: (e, s) {
-                      return Text("$e");
-                    }, loading: () {
-                      return const CircularProgressIndicator();
-                    })
-                  ],
-                ),
-              ),
+          //backgroundColor: tdBGColor,
+          actions: [
+            IconButton(
+              onPressed: () {
+                showSearch(context: context, delegate: ProductSearch());
+              },
+              icon: const Icon(Icons.search),
             ),
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const CartPage(),
+                ));
+              },
+              icon: const Icon(Icons.shopping_cart),
+            ),
+          ],
+        ),
+        body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: Colors.white, //Color(0xFFFEF9EB),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30), topLeft: Radius.circular(30)),
           ),
-        ],
-      ),
-    );
+          child: Column(
+            children: [
+              categoryAsync.when(
+                data: (categories) => Column(
+                  children: categories
+                      .map(
+                        (category) => ListProdInCategory(category.name),
+                      )
+                      .toList(),
+                ),
+                error: (error, stackTrace) => Text("$error"),
+                loading: () => const CircularProgressIndicator(),
+              )
+            ],
+          ),
+        ));
   }
 }
 
-// child: Column(
-//   children: [
-//     searchBox(),
-//     const SizedBox(
-//       height: 10,
-//     ),
-//     Center(
-//       child: productsAsyc.when(
-//         data: (products) {
-//           return Column(
-//             children: products
-//                 .map(
-//                   (e) => ProductTile(
-//                     product: e,
-//                   ),
-//                 )
-//                 .toList(),
-//           );
-//         },
-//         error: (error, stackTrace) => Text(error.toString()),
-//         loading: () => const CircularProgressIndicator(),
-//       ),
-//     ),
-//     const SizedBox(
-//       height: 20,
-//     ),
-//   ],
-// ),
+class ListProdInCategory extends ConsumerWidget {
+  const ListProdInCategory(this.name, {super.key});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final productAsync = ref.watch(productsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(name),
+      ],
+    );
+  }
+}
 
 class ProductTile extends ConsumerWidget {
   const ProductTile({super.key, required this.product});

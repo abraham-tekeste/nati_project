@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/categories_mngmt/controllers/category_provider.dart';
 import 'package:nati_project/home/controllers/products_provider.dart';
-import 'package:nati_project/home/model/product.dart';
 
-class ProdctsMngtPage extends ConsumerWidget {
-  const ProdctsMngtPage({super.key});
+class ProductsMngtPage extends ConsumerWidget {
+  const ProductsMngtPage({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
