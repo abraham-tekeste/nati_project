@@ -57,37 +57,52 @@ class HomePage extends ConsumerWidget {
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(30), topLeft: Radius.circular(30)),
           ),
-          child: Column(
-            children: [
-              categoryAsync.when(
-                data: (categories) => Column(
-                  children: categories
-                      .map(
-                        (category) => ListProdInCategory(category.name),
-                      )
-                      .toList(),
-                ),
-                error: (error, stackTrace) => Text("$error"),
-                loading: () => const CircularProgressIndicator(),
-              )
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                categoryAsync.when(
+                  data: (categories) => Column(
+                    children: categories
+                        .map(
+                          (category) => ListProdInCategory(category),
+                        )
+                        .toList(),
+                  ),
+                  error: (error, stackTrace) => Text("$error"),
+                  loading: () => const CircularProgressIndicator(),
+                )
+              ],
+            ),
           ),
         ));
   }
 }
 
 class ListProdInCategory extends ConsumerWidget {
-  const ListProdInCategory(this.name, {super.key});
+  const ListProdInCategory(this.category, {super.key});
 
-  final String name;
+  final Category category;
 
   @override
   Widget build(BuildContext context, ref) {
-    final productAsync = ref.watch(productsProvider);
+    final productAsync = ref.watch(categoryProductsProvider(category.id));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(name),
+        Text(category.name),
+        productAsync.when(
+          data: (products) => SizedBox(
+            height: 286,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: products.length,
+              itemBuilder: (context, index) =>
+                  ProductTile(product: products[index]),
+            ),
+          ),
+          error: (error, stackTrace) => Text("$error"),
+          loading: () => const CircularProgressIndicator(),
+        )
       ],
     );
   }
@@ -107,7 +122,7 @@ class ProductTile extends ConsumerWidget {
       child: Column(
         children: [
           Container(
-            width: 400,
+            width: 200,
             height: 200,
             decoration: BoxDecoration(
               image: DecorationImage(image: AssetImage(product.image)),
@@ -122,21 +137,27 @@ class ProductTile extends ConsumerWidget {
             product.name,
             style: const TextStyle(fontSize: 16),
           ),
-          ListTile(
-            leading: Text(
-              "${product.price}",
-              style: const TextStyle(fontSize: 16),
-            ),
-            trailing: IconButton(
-              onPressed: () {
-                ref.read(cartProvider.notifier).state.add(product);
-                //final priceT=ref.read(priceProvider);
-                ref.read(priceProvider.notifier).state += product.price;
-                //print(ref.read(priceProvider.notifier).state);
-              },
-              icon: const Icon(
-                Icons.add_shopping_cart_outlined,
-              ),
+          SizedBox(
+            //width: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${product.price}",
+                  style: const TextStyle(fontSize: 16),
+                ),
+                IconButton(
+                  onPressed: () {
+                    ref.read(cartProvider.notifier).state.add(product);
+                    //final priceT=ref.read(priceProvider);
+                    ref.read(priceProvider.notifier).state += product.price;
+                    //print(ref.read(priceProvider.notifier).state);
+                  },
+                  icon: const Icon(
+                    Icons.add_shopping_cart_outlined,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
