@@ -8,7 +8,7 @@ class FavouritesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final favouritesProducts = ref.watch(favouritesProvider);
+    final favouritesProducts = ref.watch(favoritesProvider);
 
     //log('Loading');
 

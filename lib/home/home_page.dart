@@ -189,7 +189,9 @@ class ListProdInCategory extends ConsumerWidget {
               child: GridView.builder(
                 itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
+                  crossAxisCount: 2,
+                  mainAxisExtent: 220,
+                ),
                 itemBuilder: (BuildContext context, int index) {
                   return ProductTile(product: products[index]);
                 },
@@ -226,8 +228,6 @@ class ListProdInCategory extends ConsumerWidget {
   }
 }
 
-final selectedFavouriteProvider = StateProvider((ref) => false);
-
 class ProductTile extends ConsumerWidget {
   const ProductTile({super.key, required this.product});
 
@@ -235,7 +235,7 @@ class ProductTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final favouriteProduct = ref.watch(selectedFavouriteProvider);
+    final isFavorite = ref.watch(isSelectedAsFavouriteProvider(product.id));
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       color: tdBGColor,
@@ -250,26 +250,24 @@ class ProductTile extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                  onPressed: () {
-                    ref.read(favouritesProvider.notifier).state.add(product);
-                    if (ref.read(selectedFavouriteProvider.notifier).state ==
-                        true) {
-                      ref.read(selectedFavouriteProvider.notifier).state =
-                          false;
-                    } else {
-                      ref.read(selectedFavouriteProvider.notifier).state = true;
-                    }
-                  },
-                  icon:
-                      ref.read(selectedFavouriteProvider.notifier).state == true
-                          ? const Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : const Icon(
-                              Icons.favorite_border_outlined,
-                              color: Colors.red,
-                            ))
+                onPressed: () {
+                  // if product is in favorite list, remove it
+                  // if product is not in favorite list, add it
+
+                  // depending on the status of the list, determine wheither a product is part of the favorites or not
+
+                  ref.read(favoritesProvider.notifier).handleFavSelect(product);
+                },
+                icon: isFavorite
+                    ? const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : const Icon(
+                        Icons.favorite_border_outlined,
+                        color: Colors.red,
+                      ),
+              )
             ],
           ),
           Container(
@@ -284,37 +282,34 @@ class ProductTile extends ConsumerWidget {
             //       product.image,
             //     )),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 16),
           Text(
             product.name,
             style: const TextStyle(fontSize: 16),
           ),
-          SizedBox(
-            //width: 100,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Text(
-                    "${product.price}",
-                    style: const TextStyle(fontSize: 16),
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  "${product.price}",
+                  style: const TextStyle(fontSize: 16),
                 ),
-                IconButton(
-                  onPressed: () {
-                    ref.read(cartProvider.notifier).state.add(product);
-                    //final priceT=ref.read(priceProvider);
-                    ref.read(priceProvider.notifier).state += product.price;
-                    //print(ref.read(priceProvider.notifier).state);
-                  },
-                  icon: const Icon(
-                    Icons.add_shopping_cart_outlined,
-                    color: Colors.blue,
-                  ),
+              ),
+              IconButton(
+                onPressed: () {
+                  ref.read(cartProvider.notifier).state.add(product);
+                  //final priceT=ref.read(priceProvider);
+                  ref.read(priceProvider.notifier).state += product.price;
+                  //print(ref.read(priceProvider.notifier).state);
+                },
+                icon: const Icon(
+                  Icons.add_shopping_cart_outlined,
+                  color: Colors.blue,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
