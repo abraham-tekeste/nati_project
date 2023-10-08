@@ -214,7 +214,9 @@ class ListProdInCategory extends ConsumerWidget {
             child: GridView.builder(
               itemCount: products.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2),
+                crossAxisCount: 2,
+                mainAxisExtent: 220,
+              ),
               itemBuilder: (BuildContext context, int index) {
                 return ProductTile(product: products[index]);
               },
@@ -236,6 +238,7 @@ class ProductTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final isFavorite = ref.watch(isSelectedAsFavouriteProvider(product.id));
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       color: tdBGColor,
@@ -243,20 +246,13 @@ class ProductTile extends ConsumerWidget {
       margin: const EdgeInsets.all(8),
       child: Column(
         children: [
-          // const ListTile(
-          //   trailing: IconButton(onPressed: null, icon: Icon(Icons.favorite)),
-          // ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
                 onPressed: () {
-                  // if product is in favorite list, remove it
-                  // if product is not in favorite list, add it
-
-                  // depending on the status of the list, determine wheither a product is part of the favorites or not
-
-                  ref.read(favoritesProvider.notifier).handleFavSelect(product);
+                  log(product.price.toString());
+                  // ref.read(favoritesProvider.notifier).handleFavSelect(product);
                 },
                 icon: isFavorite
                     ? const Icon(
@@ -274,7 +270,9 @@ class ProductTile extends ConsumerWidget {
             width: 200,
             height: 61,
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage(product.image)),
+              image: DecorationImage(
+                image: Image.network(product.thumbnail).image,
+              ),
             ),
             // child: Padding(
             //     padding: const EdgeInsets.all(0),

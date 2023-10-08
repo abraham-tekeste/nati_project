@@ -55,7 +55,7 @@ class SearchNotifier extends Notifier<void> {
             id: hit.objectID,
             name: hit['name'],
             price: double.tryParse('${hit['price']}') ?? 0,
-            image: hit['image'],
+            images: hit['image'],
           ),
         )
         .toList();

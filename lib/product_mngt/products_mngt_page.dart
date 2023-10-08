@@ -11,7 +11,7 @@ class ProductsMngtPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final productsAsync = ref.watch(productsProvider);
+    // final productsAsync = ref.watch(productsProvider);
     return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
@@ -29,43 +29,43 @@ class ProductsMngtPage extends ConsumerWidget {
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(30), topLeft: Radius.circular(30)),
           ),
-          child: productsAsync.when(
-              data: (products) {
-                return ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: const CircleAvatar(
-                          backgroundImage:
-                              AssetImage("assets/images/areki.jpeg")),
-                      title: Text(products[index].name),
-                      subtitle: Text(products[index].price.toString()),
-                      trailing: PopupMenuButton(
-                        onSelected: (value) {
-                          if (value == "set_category") {
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (context) =>
-                                    CategorySelector(id: products[index].id));
-                          }
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            const PopupMenuItem(
-                              value: "set_category",
-                              child: Text("Set category"),
-                            )
-                          ];
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-              error: (error, stackTrace) => Text("$error"),
-              loading: () {
-                return const CircularProgressIndicator();
-              }),
+          //   child: productsAsync.when(
+          //       data: (products) {
+          //         return ListView.builder(
+          //           itemCount: products.length,
+          //           itemBuilder: (BuildContext context, int index) {
+          //             return ListTile(
+          //               leading: const CircleAvatar(
+          //                   backgroundImage:
+          //                       AssetImage("assets/images/areki.jpeg")),
+          //               title: Text(products[index].name),
+          //               subtitle: Text(products[index].price.toString()),
+          //               trailing: PopupMenuButton(
+          //                 onSelected: (value) {
+          //                   if (value == "set_category") {
+          //                     showModalBottomSheet(
+          //                         context: context,
+          //                         builder: (context) =>
+          //                             CategorySelector(id: products[index].id));
+          //                   }
+          //                 },
+          //                 itemBuilder: (BuildContext context) {
+          //                   return [
+          //                     const PopupMenuItem(
+          //                       value: "set_category",
+          //                       child: Text("Set category"),
+          //                     )
+          //                   ];
+          //                 },
+          //               ),
+          //             );
+          //           },
+          //         );
+          //       },
+          //       error: (error, stackTrace) => Text("$error"),
+          //       loading: () {
+          //         return const CircularProgressIndicator();
+          //       }),
         ));
   }
 }

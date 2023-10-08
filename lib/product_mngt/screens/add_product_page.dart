@@ -10,8 +10,10 @@ class AddProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add product'),
-      elevation: 0.0,),
+      appBar: AppBar(
+        title: const Text('Add product'),
+        elevation: 0.0,
+      ),
       body: const SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(
@@ -97,9 +99,9 @@ class SubmitButton extends ConsumerWidget {
       {required String name, required double price}) async {
     //print("i was called");
     //reference to
-    final product = Product(name: name, price: price, image: "assets/images/areki.jpeg");
-    final json = product.toFireStore();
+    // final product = Product(name: name, price: price, image: "assets/images/areki.jpeg");
+    // final json = product.toFireStore();
 
-    FirebaseFirestore.instance.collection('products').add(json);
+    // FirebaseFirestore.instance.collection('products').add(json);
   }
 }

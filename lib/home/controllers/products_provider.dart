@@ -1,34 +1,73 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/product.dart';
 
 final categoryProductsProvider =
-    StreamProvider.family<List<Product>, String>((ref, arg) {
-  return FirebaseFirestore.instance
-      .collection('products')
-      .where('categoryId', isEqualTo: arg)
-      .snapshots()
-      .map((s) => s.docs.map((d) => Product.fromFireStore(d)).toList());
-});
+    StreamNotifierProvider.family<CategoryNotifier, List<Product>, String>(
+        CategoryNotifier.new);
+
+class CategoryNotifier extends FamilyStreamNotifier<List<Product>, String> {
+  @override
+  build(arg) {
+    return FirebaseFirestore.instance
+        .collection('stripeProducts')
+        .where('categoryId', isEqualTo: arg)
+        .snapshots()
+        .map((s) {
+      List<Product> products = [];
+
+      for (var p in s.docs) {
+        fetchProductPrice(p.id);
+        products.add(Product.fromFireStore(p));
+      }
+
+      return products;
+    });
+  }
+
+  void fetchProductPrice(String id) async {
+    await FirebaseFirestore.instance
+        .collection('stripeProducts')
+        .doc(id)
+        .collection('prices')
+        .get()
+        .then((pricesSnapshot) {
+      if (pricesSnapshot.size >= 1) {
+        final priceData = pricesSnapshot.docs.first.data();
+
+        double? price = priceValue(priceData['unit_amount']);
+
+        // String? currency = priceData['currency'];
+
+        if (price != null) {
+          final pIndex = state.asData?.value.indexWhere((e) => e.id == id);
+
+          if (pIndex != null && pIndex >= 0) {
+            final updatedProduct =
+                state.asData!.value[pIndex].copyWith(price: price);
+
+            state.asData!.value[pIndex] = updatedProduct;
+
+            state = AsyncData([...state.asData!.value]);
+          }
+        }
+      }
+    }).catchError((e, s) {
+      log(e.toString());
+      log(s.toString());
+    });
+  }
+
+  double? priceValue(int? stripePrice) =>
+      (double.tryParse('$stripePrice') ?? 0) / 100;
+}
 
 final productsProvider = StreamProvider<List<Product>>((ref) {
   return FirebaseFirestore.instance
-      .collection('products')
+      .collection('stripeProducts')
       .snapshots()
       .map((s) => s.docs.map((d) => Product.fromFireStore(d)).toList());
 });
-
-
-
-
-
-
-
-
-// final productsProvider = StreamProvider<List<Product>>((ref) async* {
-//   await for (var data
-//       in FirebaseFirestore.instance.collection('products').snapshots()) {
-//     yield data.docs.map((d) => Product.fromFireStore(d)).toList();
-//   }
-// });

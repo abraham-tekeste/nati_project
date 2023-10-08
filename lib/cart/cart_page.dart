@@ -49,6 +49,10 @@ class CartPage extends ConsumerWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(color: Colors.deepPurple.shade50),
                 child: Text("${ref.read(priceProvider.notifier).state}")),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Proceed to payment'),
+            )
           ],
         ),
       ],
@@ -67,13 +71,13 @@ class CartProductTile extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
       child: ListTile(
-        leading: Image.asset(product.image),
+        leading: Image.asset(product.thumbnail),
         title: Text(product.name),
         subtitle: Text(product.price.toString()),
         trailing: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            const IconButton(onPressed: null, icon: Icon(Icons.add)),
+            // const IconButton(onPressed: null, icon: Icon(Icons.add)),
             IconButton(
               onPressed: () async {
                 ref.read(cartProvider.notifier).state = [
