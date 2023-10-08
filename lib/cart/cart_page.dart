@@ -18,23 +18,25 @@ class CartPage extends ConsumerWidget {
     //log('Loading');
 
     return Scaffold(
-      backgroundColor: tdBGColor,
+      //backgroundColor: tdBGColor,
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text('Cart'),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Cart',
+          style: TextStyle(
+              fontSize: 28.0, fontWeight: FontWeight.bold, color: tdBlack),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
-          children:
-            List.generate(
+          children: List.generate(
             cartProducts.length,
             (i) => CartProductTile(cartProducts[i], i),
           ),
         ),
       ),
-
-
       persistentFooterButtons: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,15 +70,21 @@ class CartProductTile extends ConsumerWidget {
         leading: Image.asset(product.image),
         title: Text(product.name),
         subtitle: Text(product.price.toString()),
-        trailing: IconButton(
-          onPressed: () async {
-            ref.read(cartProvider.notifier).state = [
-              ...ref.read(cartProvider.notifier).state..removeAt(index)
-            ];
+        trailing: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const IconButton(onPressed: null, icon: Icon(Icons.add)),
+            IconButton(
+              onPressed: () async {
+                ref.read(cartProvider.notifier).state = [
+                  ...ref.read(cartProvider.notifier).state..removeAt(index)
+                ];
 
-            ref.read(priceProvider.notifier).state -= product.price;
-          },
-          icon: const Icon(Icons.remove),
+                ref.read(priceProvider.notifier).state -= product.price;
+              },
+              icon: const Icon(Icons.remove),
+            ),
+          ],
         ),
         //tileColor: Theme.of(context).colorScheme.surfaceVariant,
       ),

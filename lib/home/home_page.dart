@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/controllers/cart_provider.dart';
 import 'package:nati_project/categories_mngmt/controllers/category_provider.dart';
 import 'package:nati_project/home/controllers/products_provider.dart';
+
 // import 'package:nati_project/home/controllers/products_provider.dart';
 
 import '../cart/cart_page.dart';
@@ -12,24 +15,30 @@ import '../search/product_search_delegate.dart';
 import 'constants/colors.dart';
 import 'model/product.dart';
 
+final categoryDisplayProvider =
+    StateProvider<Category>((ref) => Category(name: "All"));
+
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
     //final productsAsyc = ref.watch(productsProvider);
-    final categoryAsync = ref.watch(categoriesProvider);
+    final indexProvider = ref.watch(categoryDisplayProvider);
 
-    //final totalPrices=ref.watch(priceProvider);
+    log("$indexProvider");
 
     return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
+        //backgroundColor: Theme.of(context).primaryColor,
+        //backgroundColor: Colors.grey,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           elevation: 0.0,
           centerTitle: true,
           title: const Text(
             "HOME",
-            style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 28.0, fontWeight: FontWeight.bold, color: tdBlack),
           ),
           //backgroundColor: tdBGColor,
           actions: [
@@ -37,7 +46,10 @@ class HomePage extends ConsumerWidget {
               onPressed: () {
                 showSearch(context: context, delegate: ProductSearch());
               },
-              icon: const Icon(Icons.search),
+              icon: const Icon(
+                Icons.search,
+                color: tdBlack,
+              ),
             ),
             IconButton(
               onPressed: () {
@@ -45,38 +57,118 @@ class HomePage extends ConsumerWidget {
                   builder: (context) => const CartPage(),
                 ));
               },
-              icon: const Icon(Icons.shopping_cart),
+              icon: const Icon(
+                Icons.shopping_cart,
+                color: tdBlack,
+              ),
             ),
           ],
         ),
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white, //Color(0xFFFEF9EB),
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(30), topLeft: Radius.circular(30)),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                categoryAsync.when(
-                  data: (categories) => Column(
-                    children: categories
-                        .map(
-                          (category) => ListProdInCategory(category),
-                        )
-                        .toList(),
-                  ),
-                  error: (error, stackTrace) => Text("$error"),
-                  loading: () => const CircularProgressIndicator(),
-                )
-              ],
-            ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                //margin: const EdgeInsets.only(top: 10),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "Category",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const CategoriesWidget(),
+              ListProdInCategory(indexProvider),
+
+              //ListProdInCategory(),
+              //const CategoryList(category);
+            ],
           ),
         ));
   }
 }
+
+final indexProvider = StateProvider((ref) => 0);
+
+class CategoriesWidget extends ConsumerWidget {
+  const CategoriesWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final categoryAsync = ref.watch(categoriesProvider);
+    final selectedIndex = ref.watch(indexProvider);
+    return categoryAsync.when(
+      data: (categories) => SizedBox(
+          height: 40,
+          child: ListView.builder(
+              itemCount: categories.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      //ref.watch(categoryDisplayProvider);
+                      ref.read(categoryDisplayProvider.notifier).state =
+                          categories[index];
+                      ref.read(indexProvider.notifier).state = index;
+
+                      //log("$index");
+                      //log("it is working");
+                      //CategoryList(categories[index]);
+                      //print("$ref.read(categoryDisplayProvider.notifier).state");
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => DisplayProductsPage(
+                      //           categories[index].id, categories[index].name),
+                      //     ));
+                    },
+                    child: Container(
+                      width: 150,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+
+                      //color: Colors.grey,
+                      decoration: BoxDecoration(
+                        color: index == ref.read(indexProvider.notifier).state
+                            ? Colors.black
+                            : tdBGColor,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+
+                      child: Center(
+                        child: Text(
+                          categories[index].name,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color:
+                                index == ref.read(indexProvider.notifier).state
+                                    ? Colors.white
+                                    : Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ))),
+      error: (error, stackTrace) => Text("$error"),
+      loading: () => const CircularProgressIndicator(),
+    );
+  }
+}
+
+// class CategoryList extends ConsumerWidget {
+//   const CategoryList(this.index, {super.key});
+
+//   final int index;
+
+//   @override
+//   Widget build(BuildContext context, ref) {
+//     return Container(
+//       color: Colors.blue,
+//       height: 500,
+//       child: Text($index),
+//     );
+//   }
+// }
 
 class ListProdInCategory extends ConsumerWidget {
   const ListProdInCategory(this.category, {super.key});
@@ -86,18 +178,44 @@ class ListProdInCategory extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final productAsync = ref.watch(categoryProductsProvider(category.id));
+    final productAll = ref.watch(productsProvider);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      //crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(category.name),
+        if (category.name == "All")
+          productAll.when(
+            data: (products) => SizedBox(
+              height: 700,
+              child: GridView.builder(
+                itemCount: products.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (BuildContext context, int index) {
+                  return ProductTile(product: products[index]);
+                },
+
+                // children: ListView.builder(
+                //   scrollDirection: Axis.horizontal,
+                //   itemCount: products.length,
+                //   itemBuilder: (context, index) =>
+                //       ProductTile(product: products[index]),
+                // ),
+              ),
+            ),
+            error: (error, stackTrace) => Text("$error"),
+            loading: () => const CircularProgressIndicator(),
+          ),
+        //Text(category.name),
         productAsync.when(
           data: (products) => SizedBox(
-            height: 286,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
+            height: 700,
+            child: GridView.builder(
               itemCount: products.length,
-              itemBuilder: (context, index) =>
-                  ProductTile(product: products[index]),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2),
+              itemBuilder: (BuildContext context, int index) {
+                return ProductTile(product: products[index]);
+              },
             ),
           ),
           error: (error, stackTrace) => Text("$error"),
@@ -108,6 +226,8 @@ class ListProdInCategory extends ConsumerWidget {
   }
 }
 
+final selectedFavouriteProvider = StateProvider((ref) => false);
+
 class ProductTile extends ConsumerWidget {
   const ProductTile({super.key, required this.product});
 
@@ -115,15 +235,46 @@ class ProductTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    final favouriteProduct = ref.watch(selectedFavouriteProvider);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      color: tdBGColor,
       elevation: 5,
       margin: const EdgeInsets.all(8),
       child: Column(
         children: [
+          // const ListTile(
+          //   trailing: IconButton(onPressed: null, icon: Icon(Icons.favorite)),
+          // ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    ref.read(favouritesProvider.notifier).state.add(product);
+                    if (ref.read(selectedFavouriteProvider.notifier).state ==
+                        true) {
+                      ref.read(selectedFavouriteProvider.notifier).state =
+                          false;
+                    } else {
+                      ref.read(selectedFavouriteProvider.notifier).state = true;
+                    }
+                  },
+                  icon:
+                      ref.read(selectedFavouriteProvider.notifier).state == true
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : const Icon(
+                              Icons.favorite_border_outlined,
+                              color: Colors.red,
+                            ))
+            ],
+          ),
           Container(
             width: 200,
-            height: 200,
+            height: 61,
             decoration: BoxDecoration(
               image: DecorationImage(image: AssetImage(product.image)),
             ),
@@ -133,6 +284,7 @@ class ProductTile extends ConsumerWidget {
             //       product.image,
             //     )),
           ),
+          const SizedBox(height: 4),
           Text(
             product.name,
             style: const TextStyle(fontSize: 16),
@@ -142,9 +294,12 @@ class ProductTile extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "${product.price}",
-                  style: const TextStyle(fontSize: 16),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    "${product.price}",
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
                 IconButton(
                   onPressed: () {
@@ -155,6 +310,7 @@ class ProductTile extends ConsumerWidget {
                   },
                   icon: const Icon(
                     Icons.add_shopping_cart_outlined,
+                    color: Colors.blue,
                   ),
                 ),
               ],

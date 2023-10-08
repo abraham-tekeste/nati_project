@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nati_project/favourites_page.dart';
 import 'package:nati_project/home/categories_page.dart';
 
 import 'home_page.dart';
@@ -23,9 +24,11 @@ class MainNav extends ConsumerWidget {
           HomePage(),
           CategoriesPage(),
           MenuPage(),
+          FavouritesPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           ref.read(pageIndexProvider.notifier).update((_) => index);
         },
@@ -42,7 +45,11 @@ class MainNav extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.menu),
             label: 'Menu',
-          )
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favourite',
+          ),
         ],
       ),
     );

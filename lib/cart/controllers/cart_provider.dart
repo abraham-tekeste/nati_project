@@ -5,6 +5,10 @@ final cartProvider = StateProvider<List<Product>>((ref) {
   return [];
 });
 
+final favouritesProvider = StateProvider<List<Product>>((ref) {
+  return [];
+});
+
 final priceProvider = StateProvider<double>((ref) {
   return 0;
 });
