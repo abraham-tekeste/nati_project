@@ -6,17 +6,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/product.dart';
 
 final categoryProductsProvider =
-    StreamNotifierProvider.family<CategoryNotifier, List<Product>, String>(
+    StreamNotifierProvider.family<CategoryNotifier, List<Product>, String?>(
         CategoryNotifier.new);
 
 class CategoryNotifier extends FamilyStreamNotifier<List<Product>, String> {
   @override
   build(arg) {
-    return FirebaseFirestore.instance
-        .collection('stripeProducts')
-        .where('categoryId', isEqualTo: arg)
-        .snapshots()
-        .map((s) {
+    final query = arg == 'All'
+        ? FirebaseFirestore.instance.collection('stripeProducts')
+        : FirebaseFirestore.instance
+            .collection('stripeProducts')
+            .where('categoryId', isEqualTo: arg);
+
+    return query.snapshots().map((s) {
       List<Product> products = [];
 
       for (var p in s.docs) {
@@ -43,6 +45,7 @@ class CategoryNotifier extends FamilyStreamNotifier<List<Product>, String> {
         // String? currency = priceData['currency'];
 
         if (price != null) {
+          log('Price: $price');
           final pIndex = state.asData?.value.indexWhere((e) => e.id == id);
 
           if (pIndex != null && pIndex >= 0) {

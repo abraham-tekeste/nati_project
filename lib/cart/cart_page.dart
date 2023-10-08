@@ -15,14 +15,9 @@ class CartPage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final cartProducts = ref.watch(cartProvider);
 
-    //log('Loading');
-
     return Scaffold(
-      //backgroundColor: tdBGColor,
       appBar: AppBar(
-        elevation: 0.0,
         centerTitle: true,
-        backgroundColor: Colors.white,
         title: const Text(
           'Cart',
           style: TextStyle(
@@ -71,7 +66,7 @@ class CartProductTile extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
       child: ListTile(
-        leading: Image.asset(product.thumbnail),
+        leading: Image.network(product.thumbnail),
         title: Text(product.name),
         subtitle: Text(product.price.toString()),
         trailing: Column(

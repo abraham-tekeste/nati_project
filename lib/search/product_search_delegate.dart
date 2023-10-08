@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nati_project/home/home_page.dart';
 import 'package:nati_project/home/model/product.dart';
 
+import '../home/widgets/product_tile.dart';
 import 'controllers/search_provider.dart';
 
 class ProductSearch extends SearchDelegate {

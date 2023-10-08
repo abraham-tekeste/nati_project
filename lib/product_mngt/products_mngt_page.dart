@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/categories_mngmt/controllers/category_provider.dart';
-import 'package:nati_project/home/controllers/products_provider.dart';
 
 class ProductsMngtPage extends ConsumerWidget {
   const ProductsMngtPage({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nati_project/home/home_page.dart';
 
 import '../../home/controllers/products_provider.dart';
+import '../../home/widgets/product_tile.dart';
 
 class DisplayProductsPage extends ConsumerWidget {
   const DisplayProductsPage(this.id, this.name, {super.key});
