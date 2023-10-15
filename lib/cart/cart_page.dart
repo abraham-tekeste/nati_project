@@ -17,92 +17,82 @@ class CartPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: tdBGColor,
-        elevation: 0.0,
-        centerTitle: true,
-        title: const Text(
-          'Cart',
-          style: TextStyle(
-              fontSize: 28.0, fontWeight: FontWeight.bold, color: tdBlack),
-        ),
+        title: const Text('Cart'),
       ),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          Container(
-            margin: const EdgeInsets.all(16),
-            height: 400,
-            //color: tdBGColor,
-            child: SingleChildScrollView(
-              child: Column(
-                children: List.generate(
-                  cartProducts.length,
-                  (i) => CartProductTile(cartProducts[i], i),
-                ),
-              ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: cartProducts.length,
+              itemBuilder: (context, i) {
+                return CartProductTile(cartProducts[i], i);
+              },
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              color: Colors.blue.shade50,
-            ),
-            height: 200,
-            margin: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Order Details",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
+          Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.blue.shade50,
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextInOrderDetails(
-                          labelName: "Total items",
-                          labelValue: cartProducts.length.toString()),
-                      const TextInOrderDetails(
-                          labelName: "Shipping Charges", labelValue: "0.0"),
-                      const TextInOrderDetails(
-                          labelName: "Total Tax", labelValue: "15%"),
-                      TextInOrderDetails(
-                          labelName: "Grand Total",
-                          labelValue: ref
-                              .read(priceProvider.notifier)
-                              .state
-                              .toString()),
-                    ],
-                  ),
+                constraints: const BoxConstraints(minHeight: 250),
+                margin: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Order Details",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          TextInOrderDetails(
+                              labelName: "Total items",
+                              labelValue: cartProducts.length.toString()),
+                          const TextInOrderDetails(
+                              labelName: "Shipping Charges", labelValue: "0.0"),
+                          const TextInOrderDetails(
+                              labelName: "Total Tax", labelValue: "15%"),
+                          TextInOrderDetails(
+                              labelName: "Grand Total",
+                              labelValue: ref
+                                  .read(priceProvider.notifier)
+                                  .state
+                                  .toString()),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 50,
-            width: 300,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0))),
-              onPressed: () {},
-              child: const Text(
-                'Proceed to payment',
-                style: TextStyle(fontSize: 16),
               ),
-            ),
-          )
-        ]),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(300, 48)),
+                  child: const Text(
+                    'Proceed to payment',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
 
       // persistentFooterButtons: [

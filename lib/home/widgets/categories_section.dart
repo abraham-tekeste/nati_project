@@ -13,7 +13,10 @@ class CategoriesSection extends ConsumerWidget {
 
     return categoryAsync.when(
       data: (categories) {
-        categories.insert(0, Category(name: 'All', id: 'All'));
+        if (categories.indexWhere((c) => c.id == 'All') == -1) {
+          categories.insert(0, Category(name: 'All', id: 'All'));
+        }
+
         return SizedBox(
           height: 96,
           child: Column(

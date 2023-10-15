@@ -19,7 +19,7 @@ class Product {
     return Product(
       id: snapshot.id,
       name: json['name'] ?? 'Unknown product',
-      price: double.tryParse('${json['price']}') ?? 0,
+      price: 0,
       images:
           json['images'] is Iterable ? List<String>.from(json['images']) : [],
     );

@@ -42,6 +42,8 @@ dependencies:
   cloud_functions: ^4.4.0
   algoliasearch: 0.2.3
   flutter_stripe: ^9.4.0
+  firebase_auth: ^4.9.0
+  firebase_ui_auth: ^1.8.0
 
 dev_dependencies:
   flutter_test:
