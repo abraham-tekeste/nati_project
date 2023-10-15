@@ -13,10 +13,13 @@ class CategoryNotifier extends FamilyStreamNotifier<List<Product>, String> {
   @override
   build(arg) {
     final query = arg == 'All'
-        ? FirebaseFirestore.instance.collection('stripeProducts')
+        ? FirebaseFirestore.instance
+            .collection('stripeProducts')
+            .where('active', isEqualTo: true)
         : FirebaseFirestore.instance
             .collection('stripeProducts')
-            .where('categoryId', isEqualTo: arg);
+            .where('categoryId', isEqualTo: arg)
+            .where('active', isEqualTo: true);
 
     return query.snapshots().map((s) {
       List<Product> products = [];
@@ -40,11 +43,11 @@ class CategoryNotifier extends FamilyStreamNotifier<List<Product>, String> {
       if (pricesSnapshot.size >= 1) {
         final priceData = pricesSnapshot.docs.first.data();
 
-        double? price = priceValue(priceData['unit_amount']);
+        double price = double.tryParse('${priceData['unit_amount']}') ?? 0;
 
         // String? currency = priceData['currency'];
 
-        if (price != null) {
+        if (price > 0) {
           log('Price: $price');
           final pIndex = state.asData?.value.indexWhere((e) => e.id == id);
 
@@ -63,9 +66,6 @@ class CategoryNotifier extends FamilyStreamNotifier<List<Product>, String> {
       log(s.toString());
     });
   }
-
-  double? priceValue(int? stripePrice) =>
-      (double.tryParse('$stripePrice') ?? 0) / 100;
 }
 
 final productsProvider = StreamProvider<List<Product>>((ref) {

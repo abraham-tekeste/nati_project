@@ -60,7 +60,7 @@ class ProductTile extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 16),
                 child: Text(
-                  "${product.price}",
+                  "${product.priceValue}",
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
@@ -68,7 +68,7 @@ class ProductTile extends ConsumerWidget {
                 onPressed: () {
                   ref.read(cartProvider.notifier).state.add(product);
                   //final priceT=ref.read(priceProvider);
-                  ref.read(priceProvider.notifier).state += product.price;
+                  ref.read(priceProvider.notifier).state += product.priceValue;
                   //print(ref.read(priceProvider.notifier).state);
                 },
                 icon: const Icon(

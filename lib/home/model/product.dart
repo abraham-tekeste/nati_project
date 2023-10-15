@@ -45,4 +45,6 @@ class Product {
   }
 
   String get thumbnail => images.isEmpty ? '' : images.first;
+
+  double get priceValue => price / 100;
 }

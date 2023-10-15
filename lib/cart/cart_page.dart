@@ -1,8 +1,12 @@
 //import 'dart:developer';
 
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nati_project/home/constants/colors.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:nati_project/auth/controllers/user_provider.dart';
 
 import '../home/model/product.dart';
 import 'controllers/cart_provider.dart';
@@ -78,42 +82,70 @@ class CartPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(300, 48)),
-                  child: const Text(
-                    'Proceed to payment',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
+              const CheckOutButton(),
             ],
           ),
         ],
       ),
+    );
+  }
+}
 
-      // persistentFooterButtons: [
-      //   Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: [
-      //       const Text("Total:"),
-      //       const SizedBox(
-      //         width: 100,
-      //       ),
-      //       Container(
-      //           padding: const EdgeInsets.all(10),
-      //           decoration: BoxDecoration(color: Colors.deepPurple.shade50),
-      //           child: Text("${ref.read(priceProvider.notifier).state}")),
-      //       ElevatedButton(
-      //         onPressed: () {},
-      //         child: const Text('Proceed to payment'),
-      //       )
-      //     ],
-      //   ),
-      // ],
+class CheckOutButton extends ConsumerWidget {
+  const CheckOutButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final cartProducts = ref.watch(cartProvider);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: ElevatedButton(
+        onPressed: cartProducts.isEmpty
+            ? null
+            : () async {
+                final purchaseProduct = cartProducts.first;
+                final userId = ref.read(userProvider).asData!.value!.uid;
+                final checkOutRef = await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(userId)
+                    .collection('checkout_sessions')
+                    .add({
+                  'client': 'mobile',
+                  'mode': 'payment',
+                  'amount': purchaseProduct.price,
+                  'currency': 'usd',
+                });
+
+                checkOutRef.snapshots().listen((checkOutSnap) async {
+                  final data = checkOutSnap.data();
+
+                  final clietSecret = data?['paymentIntentClientSecret'];
+                  final ephemeralKeySecret = data?['ephemeralKeySecret'];
+
+                  if (clietSecret != null) {
+                    await Stripe.instance.initPaymentSheet(
+                      paymentSheetParameters: SetupPaymentSheetParameters(
+                        paymentIntentClientSecret: clietSecret,
+                        customerEphemeralKeySecret: ephemeralKeySecret,
+                        merchantDisplayName: 'Enda Areki',
+                      ),
+                    );
+
+                    await Stripe.instance.presentPaymentSheet(
+                        options: const PaymentSheetPresentOptions());
+                    await Stripe.instance.confirmPaymentSheetPayment();
+                  }
+                });
+              },
+        style: ElevatedButton.styleFrom(minimumSize: const Size(300, 48)),
+        child: const Text(
+          'Proceed to payment',
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 }
@@ -161,7 +193,7 @@ class CartProductTile extends ConsumerWidget {
       child: ListTile(
         //leading: Image.network(product.thumbnail),
         title: Text(product.name),
-        subtitle: Text(product.price.toString()),
+        subtitle: Text(product.priceValue.toString()),
         trailing: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
