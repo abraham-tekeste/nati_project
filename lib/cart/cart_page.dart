@@ -1,6 +1,4 @@
-//import 'dart:developer';
-
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +104,9 @@ class CheckOutButton extends ConsumerWidget {
         onPressed: cartProducts.isEmpty
             ? null
             : () async {
-                final purchaseProduct = cartProducts.first;
+                final totalPrice = cartProducts.fold<double>(
+                    0, (previousValue, e) => previousValue + e.price);
+
                 final userId = ref.read(userProvider).asData!.value!.uid;
                 final checkOutRef = await FirebaseFirestore.instance
                     .collection('users')
@@ -115,11 +115,16 @@ class CheckOutButton extends ConsumerWidget {
                     .add({
                   'client': 'mobile',
                   'mode': 'payment',
-                  'amount': purchaseProduct.price,
+                  'amount': totalPrice,
                   'currency': 'usd',
                 });
 
-                checkOutRef.snapshots().listen((checkOutSnap) async {
+                late final StreamSubscription<
+                        DocumentSnapshot<Map<String, dynamic>>>
+                    checkOutSubscription;
+
+                checkOutSubscription =
+                    checkOutRef.snapshots().listen((checkOutSnap) async {
                   final data = checkOutSnap.data();
 
                   final clietSecret = data?['paymentIntentClientSecret'];
@@ -136,7 +141,20 @@ class CheckOutButton extends ConsumerWidget {
 
                     await Stripe.instance.presentPaymentSheet(
                         options: const PaymentSheetPresentOptions());
-                    await Stripe.instance.confirmPaymentSheetPayment();
+                    // await Stripe.instance.confirmPaymentSheetPayment();
+
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userId)
+                        .collection('purchases')
+                        .add({
+                      'isDelivered': false,
+                      'productsId': cartProducts.map((e) => e.id),
+                    });
+
+                    ref.read(cartProvider.notifier).update((_) => []);
+
+                    checkOutSubscription.cancel();
                   }
                 });
               },
