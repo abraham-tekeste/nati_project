@@ -204,7 +204,7 @@ class CartProductTile extends ConsumerWidget {
                   ...ref.read(cartProvider.notifier).state..removeAt(index)
                 ];
 
-                ref.read(priceProvider.notifier).state -= product.price;
+                ref.read(priceProvider.notifier).state -= product.priceValue;
               },
               icon: const Icon(Icons.remove),
             ),

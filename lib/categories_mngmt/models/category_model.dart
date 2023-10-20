@@ -8,7 +8,8 @@ class Category {
     this.id = '',
   });
 
-  factory Category.fromFireStore(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
+  factory Category.fromFireStore(
+      QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
     final json = snapshot.data();
 
     return Category(

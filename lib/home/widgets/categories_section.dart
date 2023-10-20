@@ -43,14 +43,17 @@ class CategoriesSection extends ConsumerWidget {
                             ref.watch(selectedCategoryProvider).id ==
                                 category.id;
 
-                        return FilterChip(
-                          selected: isSelected,
-                          onSelected: (value) {
-                            ref
-                                .read(selectedCategoryProvider.notifier)
-                                .update((_) => category);
-                          },
-                          label: Text(category.name),
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: FilterChip(
+                            selected: isSelected,
+                            onSelected: (value) {
+                              ref
+                                  .read(selectedCategoryProvider.notifier)
+                                  .update((_) => category);
+                            },
+                            label: Text(category.name),
+                          ),
                         );
                       },
                     );
