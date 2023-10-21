@@ -2,7 +2,7 @@ import 'package:nati_project/home/model/product.dart';
 
 class CartProduct {
   final Product product;
-  final int quantity;
+  int quantity;
 
   CartProduct({required this.product, required this.quantity});
 

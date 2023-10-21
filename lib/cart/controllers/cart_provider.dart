@@ -40,9 +40,8 @@ final priceProvider = StateProvider<double>((ref) {
   final cartProducts = ref.watch(cartProvider);
   double sum = 0;
   for (var e in cartProducts) {
-    sum = sum + e.product.priceValue;
+    sum = sum + e.product.priceValue * e.quantity;
   }
-
   return sum;
 });
 

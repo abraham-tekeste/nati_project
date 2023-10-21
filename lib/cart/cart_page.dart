@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:nati_project/auth/controllers/user_provider.dart';
+import 'package:nati_project/cart/model/cart_product.dart';
 import 'dart:developer';
 
 import '../home/model/product.dart';
@@ -30,7 +31,7 @@ class CartPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               itemCount: cartProducts.length,
               itemBuilder: (context, i) {
-                return CartProductTile(cartProducts.elementAt(i).product, i);
+                return CartProductTile(cartProducts.elementAt(i));
               },
             ),
           ),
@@ -63,6 +64,14 @@ class CartPage extends ConsumerWidget {
                       child: Column(
                         // mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
+                          TextInOrderDetails(
+                              labelName: "Total quantity",
+                              labelValue: cartProducts
+                                  .fold(
+                                      0,
+                                      (previousValue, element) =>
+                                          previousValue + element.quantity)
+                                  .toString()),
                           TextInOrderDetails(
                               labelName: "Total items",
                               labelValue: cartProducts.length.toString()),
@@ -173,6 +182,7 @@ class TextInOrderDetails extends StatelessWidget {
     required this.labelValue,
     super.key,
   });
+
   final String labelName;
   final String labelValue;
 
@@ -198,41 +208,61 @@ class TextInOrderDetails extends StatelessWidget {
 }
 
 class CartProductTile extends ConsumerWidget {
-  const CartProductTile(this.product, this.index, {super.key});
+  const CartProductTile(this.cartProduct, {super.key});
 
-  final Product product;
-  final int index;
+  final CartProduct cartProduct;
 
   @override
   Widget build(BuildContext context, ref) {
+    final product = cartProduct.product;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
-      child: ListTile(
-        //leading: Image.network(product.thumbnail),
-        title: Text(product.name),
-        subtitle: Text(product.priceValue.toString()),
-        trailing: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            // const IconButton(onPressed: null, icon: Icon(Icons.add)),
-            IconButton(
-              onPressed: () async {
-                try {
-                  ref.read(cartProvider.notifier).state = {
-                    ...ref.read(cartProvider.notifier).state
-                      ..removeWhere(
-                        (element) => product.id == element.product.id,
-                      )
-                  };
-                } on Exception catch (e) {
-                  log(e.toString());
-                }
-              },
-              icon: const Icon(Icons.remove),
-            ),
-          ],
-        ),
-        //tileColor: Theme.of(context).colorScheme.surfaceVariant,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              Text(product.name),
+              Text(cartProduct.quantity.toString()),
+              Text(product.priceValue.toString()),
+            ],
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    cartProduct.quantity++;
+                    ref.read(cartProvider.notifier).state = {
+                      ...ref.read(cartProvider.notifier).state
+                    };
+                  },
+                  icon: const Icon(Icons.add)),
+              IconButton(
+                onPressed: () async {
+                  try {
+                    cartProduct.quantity--;
+                    if (cartProduct.quantity < 1) {
+                      ref.read(cartProvider.notifier).state = {
+                        ...ref.read(cartProvider.notifier).state
+                          ..removeWhere(
+                            (element) => product.id == element.product.id,
+                          )
+                      };
+                    } else {
+                      ref.read(cartProvider.notifier).state = {
+                        ...ref.read(cartProvider.notifier).state
+                      };
+                    }
+                  } on Exception catch (e) {
+                    log(e.toString());
+                  }
+                },
+                icon: const Icon(Icons.remove),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
