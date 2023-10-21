@@ -47,4 +47,11 @@ class Product {
   String get thumbnail => images.isEmpty ? '' : images.first;
 
   double get priceValue => price / 100;
+  @override
+  int get hashCode => Object.hash(id, name);
+
+  @override
+  bool operator ==(covariant Product other) {
+    return identical(this, other) || id == other.id;
+  }
 }

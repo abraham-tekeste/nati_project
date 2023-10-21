@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nati_project/cart/model/cart_product.dart';
 
 import '../../cart/controllers/cart_provider.dart';
 import '../constants/colors.dart';
@@ -66,14 +67,16 @@ class ProductTile extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () {
-                  ref.read(cartProvider.notifier).state.add(product);
+                  ref.read(cartProvider.notifier).state = {
+                    ...ref.read(cartProvider.notifier).state
+                      ..add(CartProduct(product: product, quantity: 1))
+                  };
                   //final priceT=ref.read(priceProvider);
-                  ref.read(priceProvider.notifier).state += product.priceValue;
+                  //ref.read(priceProvider.notifier).state += product.priceValue;
                   //print(ref.read(priceProvider.notifier).state);
                 },
                 icon: const Icon(
                   Icons.add_shopping_cart_outlined,
-                  color: Colors.blue,
                 ),
               ),
             ],

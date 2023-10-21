@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nati_project/cart/model/cart_product.dart';
 import 'package:nati_project/home/model/product.dart';
 
-final cartProvider = StateProvider<List<Product>>((ref) {
-  return [];
+final cartProvider = StateProvider<Set<CartProduct>>((ref) {
+  return {};
 });
 
 // final favouritesProvider = StateProvider<List<Product>>((ref) {
@@ -30,16 +31,19 @@ class FavoritesNotifier extends Notifier<List<Product>> {
         ...state..removeWhere((element) => element.id == product.id),
       ];
     } else {
-      state = [
-        ...state,
-        product,
-      ];
+      state = [...state, product];
     }
   }
 }
 
 final priceProvider = StateProvider<double>((ref) {
-  return 0;
+  final cartProducts = ref.watch(cartProvider);
+  double sum = 0;
+  for (var e in cartProducts) {
+    sum = sum + e.product.priceValue;
+  }
+
+  return sum;
 });
 
 // final arekiCounterProvider = StateProvider<double>((ref) {

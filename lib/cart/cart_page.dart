@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:nati_project/auth/controllers/user_provider.dart';
+import 'dart:developer';
 
 import '../home/model/product.dart';
 import 'controllers/cart_provider.dart';
@@ -16,6 +17,7 @@ class CartPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final cartProducts = ref.watch(cartProvider);
+    final totalPrice = ref.watch(priceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +30,7 @@ class CartPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               itemCount: cartProducts.length,
               itemBuilder: (context, i) {
-                return CartProductTile(cartProducts[i], i);
+                return CartProductTile(cartProducts.elementAt(i).product, i);
               },
             ),
           ),
@@ -70,10 +72,7 @@ class CartPage extends ConsumerWidget {
                               labelName: "Total Tax", labelValue: "15%"),
                           TextInOrderDetails(
                               labelName: "Grand Total",
-                              labelValue: ref
-                                  .read(priceProvider.notifier)
-                                  .state
-                                  .toString()),
+                              labelValue: totalPrice.toString()),
                         ],
                       ),
                     ),
@@ -105,7 +104,7 @@ class CheckOutButton extends ConsumerWidget {
             ? null
             : () async {
                 final totalPrice = cartProducts.fold<double>(
-                    0, (previousValue, e) => previousValue + e.price);
+                    0, (previousValue, e) => previousValue + e.product.price);
 
                 final userId = ref.read(userProvider).asData!.value!.uid;
                 final checkOutRef = await FirebaseFirestore.instance
@@ -149,10 +148,10 @@ class CheckOutButton extends ConsumerWidget {
                         .collection('purchases')
                         .add({
                       'isDelivered': false,
-                      'productsId': cartProducts.map((e) => e.id),
+                      'productsId': cartProducts.map((e) => e.product.id),
                     });
 
-                    ref.read(cartProvider.notifier).update((_) => []);
+                    ref.read(cartProvider.notifier).update((_) => {});
 
                     checkOutSubscription.cancel();
                   }
@@ -218,11 +217,16 @@ class CartProductTile extends ConsumerWidget {
             // const IconButton(onPressed: null, icon: Icon(Icons.add)),
             IconButton(
               onPressed: () async {
-                ref.read(cartProvider.notifier).state = [
-                  ...ref.read(cartProvider.notifier).state..removeAt(index)
-                ];
-
-                ref.read(priceProvider.notifier).state -= product.priceValue;
+                try {
+                  ref.read(cartProvider.notifier).state = {
+                    ...ref.read(cartProvider.notifier).state
+                      ..removeWhere(
+                        (element) => product.id == element.product.id,
+                      )
+                  };
+                } on Exception catch (e) {
+                  log(e.toString());
+                }
               },
               icon: const Icon(Icons.remove),
             ),
