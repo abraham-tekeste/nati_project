@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:nati_project/auth/controllers/user_provider.dart';
 import 'package:nati_project/cart/model/cart_product.dart';
-import 'dart:developer';
 
-import '../home/model/product.dart';
 import 'controllers/cart_provider.dart';
 
 // this is comment for test github
@@ -17,8 +16,17 @@ class CartPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final cartProducts = ref.watch(cartProvider);
+    final cartProductsAsync = ref.watch(cartProvider);
     final totalPrice = ref.watch(priceProvider);
+    var cartProducts = <CartProduct>{};
+
+    cartProductsAsync.when(
+      data: (cartProduct) {
+        cartProducts = cartProduct;
+      },
+      error: (error, stackTrace) => Text("$error"),
+      loading: () => const CircularProgressIndicator(),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -26,15 +34,32 @@ class CartPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: cartProducts.length,
-              itemBuilder: (context, i) {
-                return CartProductTile(cartProducts.elementAt(i));
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: ListView.builder(
+          //     padding: const EdgeInsets.all(16),
+          //     itemCount: cartProducts.length,
+          //     itemBuilder: (context, i) {
+          //       return CartProductTile(cartProducts.elementAt(i));
+          //     },
+          //   ),
+          // ),
+
+          cartProductsAsync.when(data: (cartProducts) {
+            return SizedBox(
+              height: 368,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: cartProducts.length,
+                itemBuilder: (context, i) {
+                  return CartProductTile(cartProducts.elementAt(i));
+                },
+              ),
+            );
+          }, error: (e, s) {
+            return Text("$e");
+          }, loading: () {
+            return const CircularProgressIndicator();
+          }),
           Column(
             children: [
               Container(
@@ -65,13 +90,27 @@ class CartPage extends ConsumerWidget {
                         // mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextInOrderDetails(
-                              labelName: "Total quantity",
-                              labelValue: cartProducts
-                                  .fold(
-                                      0,
-                                      (previousValue, element) =>
-                                          previousValue + element.quantity)
-                                  .toString()),
+                            labelName: "Total quantity",
+                            labelValue: cartProducts
+                                .fold(
+                                    0,
+                                    (previousValue, element) =>
+                                        previousValue + element.quantity)
+                                .toString(),
+                            //     cartProducts.when(data: (cartProducts) {
+                            //   return cartProducts
+                            //       .fold(
+                            //           0,
+                            //           (previousValue, element) =>
+                            //               previousValue + element.quantity)
+                            //       .toString();
+                            // }, error: (e, s) {
+                            //   return Text('$e').toString();
+                            // }, loading: () {
+                            //   return const CircularProgressIndicator()
+                            //       .toString();
+                            // })
+                          ),
                           TextInOrderDetails(
                               labelName: "Total items",
                               labelValue: cartProducts.length.toString()),
@@ -104,7 +143,16 @@ class CheckOutButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final cartProducts = ref.watch(cartProvider);
+    final cartProductAsync = ref.watch(cartProvider);
+    var cartProducts = <CartProduct>{};
+
+    cartProductAsync.when(
+      data: (cartProduct) {
+        cartProducts = cartProduct;
+      },
+      error: (error, stackTrace) => Text("$error"),
+      loading: () => const CircularProgressIndicator(),
+    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -160,7 +208,7 @@ class CheckOutButton extends ConsumerWidget {
                       'productsId': cartProducts.map((e) => e.product.id),
                     });
 
-                    ref.read(cartProvider.notifier).update((_) => {});
+                    //ref.read(cartProvider.notifier).update((_) => {});
 
                     checkOutSubscription.cancel();
                   }
@@ -233,9 +281,9 @@ class CartProductTile extends ConsumerWidget {
               IconButton(
                   onPressed: () {
                     cartProduct.quantity++;
-                    ref.read(cartProvider.notifier).state = {
-                      ...ref.read(cartProvider.notifier).state
-                    };
+                    // ref.read(cartProvider.notifier).state = {
+                    //   ...ref.read(cartProvider.notifier).state
+                    // };
                   },
                   icon: const Icon(Icons.add)),
               IconButton(
@@ -243,16 +291,16 @@ class CartProductTile extends ConsumerWidget {
                   try {
                     cartProduct.quantity--;
                     if (cartProduct.quantity < 1) {
-                      ref.read(cartProvider.notifier).state = {
-                        ...ref.read(cartProvider.notifier).state
-                          ..removeWhere(
-                            (element) => product.id == element.product.id,
-                          )
-                      };
+                      // ref.read(cartProvider.notifier).state = {
+                      //   ...ref.read(cartProvider.notifier).state
+                      //     ..removeWhere(
+                      //       (element) => product.id == element.product.id,
+                      //     )
+                      // };
                     } else {
-                      ref.read(cartProvider.notifier).state = {
-                        ...ref.read(cartProvider.notifier).state
-                      };
+                      // ref.read(cartProvider.notifier).state = {
+                      //   ...ref.read(cartProvider.notifier).state
+                      // };
                     }
                   } on Exception catch (e) {
                     log(e.toString());

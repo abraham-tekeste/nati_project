@@ -7,9 +7,10 @@ class Product {
 
   Product({
     required this.name,
-    this.id = '',
+    required this.id,
     required this.price,
     required this.images,
+    //required String image,
   });
 
   factory Product.fromFireStore(
@@ -27,9 +28,10 @@ class Product {
 
   Map<String, dynamic> toFireStore() {
     return {
-      // 'name': name,
-      // 'price': price,
-      // 'image': image,
+      'id': id,
+      'name': name,
+      'price': price,
+      'image': images,
     };
   }
 

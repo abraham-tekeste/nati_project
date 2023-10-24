@@ -1,10 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/model/cart_product.dart';
 import 'package:nati_project/home/model/product.dart';
 
-final cartProvider = StateProvider<Set<CartProduct>>((ref) {
-  return {};
+// final cartProvider = StateProvider<Set<CartProduct>>((ref) {
+//   return {};
+// });
+
+// final cartProvider =
+//     NotifierProvider<CartNotifier, Set<Product>>(CartNotifier.new);
+
+final cartProvider = StreamProvider<Set<CartProduct>>((ref) {
+  return FirebaseFirestore.instance.collection("cart").snapshots().map((s) => s
+      .docs
+      .map((d) => CartProduct(product: Product.fromFireStore(d), quantity: 1))
+      .toSet());
 });
+
+// class CartNotifier extends Notifier<Set<Product>> {
+//   @override
+//   build() {
+//     final cartProducts = <Product>{};
+//     final query = FirebaseFirestore.instance
+//         .collection("cart")
+//         .snapshots()
+//         .map((s) => s.docs.map((d) => Product.fromFireStore(d)));
+
+//     cartProducts.addAll(query as Iterable<Product>);
+//     return cartProducts;
+//   }
+// }
 
 // final favouritesProvider = StateProvider<List<Product>>((ref) {
 //   return []; // 0xmdkmnklwlkeflkw [kdms, sndk]
@@ -37,26 +63,19 @@ class FavoritesNotifier extends Notifier<List<Product>> {
 }
 
 final priceProvider = StateProvider<double>((ref) {
-  final cartProducts = ref.watch(cartProvider);
+  final cartProductAsync = ref.watch(cartProvider);
+  var cartProducts = <CartProduct>{};
+  cartProductAsync.when(
+    data: (cartProduct) {
+      cartProducts = cartProduct;
+    },
+    error: (error, stackTrace) => Text("$error"),
+    loading: () => const CircularProgressIndicator(),
+  );
+
   double sum = 0;
   for (var e in cartProducts) {
     sum = sum + e.product.priceValue * e.quantity;
   }
   return sum;
 });
-
-// final arekiCounterProvider = StateProvider<double>((ref) {
-//   return 0;
-// });
-//
-// final kognachCounterProvider = StateProvider<double>((ref) {
-//   return 0;
-// });
-//
-// final arekiNayAsmaraCounterProvider = StateProvider<double>((ref) {
-//   return 0;
-// });
-//
-// final jinCounterProvider = StateProvider<double>((ref) {
-//   return 0;
-// });

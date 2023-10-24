@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/model/cart_product.dart';
@@ -67,13 +71,20 @@ class ProductTile extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () {
-                  ref.read(cartProvider.notifier).state = {
-                    ...ref.read(cartProvider.notifier).state
-                      ..add(CartProduct(product: product, quantity: 1))
-                  };
-                  //final priceT=ref.read(priceProvider);
-                  //ref.read(priceProvider.notifier).state += product.priceValue;
-                  //print(ref.read(priceProvider.notifier).state);
+                  // ref.read(cartProvider.notifier).state = {
+                  //   ...ref.read(cartProvider.notifier).state
+                  //     ..add(CartProduct(product: product, quantity: 1))
+                  // };
+                  //FirebaseFirestore.instance.collection("cart").doc(product.id);
+                  //log(product.id);
+                  // print("inside icon button");
+                  // print(product.id);
+                  createProductToFirebase(
+                    id: product.id,
+                    name: product.name,
+                    price: product.priceValue,
+                  );
+                  //FirebaseFirestore.instance.collection("cart").doc().
                 },
                 icon: const Icon(
                   Icons.add_shopping_cart_outlined,
@@ -85,4 +96,33 @@ class ProductTile extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future createProductToFirebase(
+    {required String id, required String name, required double price}) async {
+  // final documentInCart =
+  // FirebaseFirestore.instance.collection("cart").doc(id).get;
+
+  FirebaseFirestore.instance
+      .collection('cart')
+      .doc(id)
+      .get()
+      .then((DocumentSnapshot doc) {
+    if (doc.exists) {
+      // The document with the specified ID exists.
+      // print('Document exists');
+
+      //  final scaffoldMessenger = ScaffoldMessenger.of(context);
+      // scaffoldMessenger.showSnackBar(
+      //   SnackBar(
+      //     content: Text('Document already exists'),
+      //   ),
+      // );
+    } else {
+      // The document with the specified ID does not exist.
+      final product = Product(name: name, price: price, images: [], id: id);
+      final json = product.toFireStore();
+      FirebaseFirestore.instance.collection('cart').doc(id).set(json);
+    }
+  });
 }
