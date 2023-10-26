@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nati_project/home/model/product.dart';
 
 class CartProduct {
@@ -5,6 +6,20 @@ class CartProduct {
   int quantity;
 
   CartProduct({required this.product, required this.quantity});
+
+  factory CartProduct.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    final json = snapshot.data();
+
+    return CartProduct(
+        product: Product.fromFireStore(snapshot),
+        quantity: json?['quantity'] ?? 0);
+  }
+
+  Map<String, dynamic> toFireStore() {
+    return product.toFireStore()..addAll({'quantity': quantity});
+  }
 
   @override
   int get hashCode => Object.hash(product.id, product.name);

@@ -14,6 +14,19 @@ class Product {
   });
 
   factory Product.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data() ?? {};
+
+    return Product(
+      id: snapshot.id,
+      name: data['name'] ?? 'Unknown product',
+      price: data['price'] ?? 0,
+      images:
+          data['images'] is Iterable ? List<String>.from(data['images']) : [],
+    );
+  }
+
+  factory Product.fromQueryFireStore(
       QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
     final json = snapshot.data();
 

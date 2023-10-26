@@ -11,11 +11,8 @@ import 'package:nati_project/home/model/product.dart';
 // final cartProvider =
 //     NotifierProvider<CartNotifier, Set<Product>>(CartNotifier.new);
 
-final cartProvider = StreamProvider<Set<CartProduct>>((ref) {
-  return FirebaseFirestore.instance.collection("cart").snapshots().map((s) => s
-      .docs
-      .map((d) => CartProduct(product: Product.fromFireStore(d), quantity: 1))
-      .toSet());
+final cartProvider = StateProvider<Set<CartProduct>>((ref) {
+  return {};
 });
 
 final isSelectedAsFavouriteProvider = StateProvider.family((ref, arg) {
@@ -46,17 +43,8 @@ class FavoritesNotifier extends Notifier<List<Product>> {
 
 final priceProvider = StateProvider<double>((ref) {
   final cartProductAsync = ref.watch(cartProvider);
-  var cartProducts = <CartProduct>{};
-  cartProductAsync.when(
-    data: (cartProduct) {
-      cartProducts = cartProduct;
-    },
-    error: (error, stackTrace) => Text("$error"),
-    loading: () => const CircularProgressIndicator(),
-  );
-
   double sum = 0;
-  for (var e in cartProducts) {
+  for (var e in ref.read(cartProvider)) {
     sum = sum + e.product.price * e.quantity;
   }
   return sum;

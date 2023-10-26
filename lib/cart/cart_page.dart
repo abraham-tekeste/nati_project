@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -16,17 +18,9 @@ class CartPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final cartProductsAsync = ref.watch(cartProvider);
-    final totalPrice = ref.watch(priceProvider);
-    var cartProducts = <CartProduct>{};
+    //final cartProducts = ref.watch(cartProvider);
 
-    cartProductsAsync.when(
-      data: (cartProduct) {
-        cartProducts = cartProduct;
-      },
-      error: (error, stackTrace) => Text("$error"),
-      loading: () => const CircularProgressIndicator(),
-    );
+    final totalPrice = ref.watch(priceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,22 +28,34 @@ class CartPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          cartProductsAsync.when(data: (cartProducts) {
-            return SizedBox(
-              height: 368,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: cartProducts.length,
-                itemBuilder: (context, i) {
-                  return CartProductTile(cartProducts.elementAt(i));
-                },
-              ),
-            );
-          }, error: (e, s) {
-            return Text("$e");
-          }, loading: () {
-            return const CircularProgressIndicator();
-          }),
+          Expanded(
+            child: FirestoreListView<CartProduct>(
+              query: FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  // .doc('W7UghHOBv4ZubklGmaj60oPW4tB3')
+                  .collection('cart')
+                  .withConverter(
+                    fromFirestore: CartProduct.fromFireStore,
+                    toFirestore: (value, options) {
+                      return value.toFireStore();
+                    },
+                  ),
+              errorBuilder: (context, error, stackTrace) => Text("$error"),
+              loadingBuilder: (context) => const CircularProgressIndicator(),
+              itemBuilder: (context, doc) {
+                Future(
+                  () {
+                    ref.read(cartProvider.notifier).state = {
+                      ...ref.read(cartProvider),
+                      doc.data()
+                    };
+                  },
+                );
+                return CartProductTile(doc.data());
+              },
+            ),
+          ),
           Column(
             children: [
               Container(
@@ -81,7 +87,8 @@ class CartPage extends ConsumerWidget {
                         children: [
                           TextInOrderDetails(
                             labelName: "Total quantity",
-                            labelValue: cartProducts
+                            labelValue: ref
+                                .read(cartProvider)
                                 .fold(
                                     0,
                                     (previousValue, element) =>
@@ -103,12 +110,8 @@ class CartPage extends ConsumerWidget {
                           ),
                           TextInOrderDetails(
                               labelName: "Total items",
-                              labelValue: ref
-                                  .read(cartProvider)
-                                  .asData!
-                                  .value
-                                  .length
-                                  .toString()),
+                              labelValue:
+                                  ref.read(cartProvider).length.toString()),
                           const TextInOrderDetails(
                               labelName: "Shipping Charges", labelValue: "0.0"),
                           const TextInOrderDetails(
@@ -138,16 +141,15 @@ class CheckOutButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final cartProductAsync = ref.watch(cartProvider);
-    var cartProducts = <CartProduct>{};
+    final cartProducts = ref.watch(cartProvider);
 
-    cartProductAsync.when(
-      data: (cartProduct) {
-        cartProducts = cartProduct;
-      },
-      error: (error, stackTrace) => Text("$error"),
-      loading: () => const CircularProgressIndicator(),
-    );
+    // cartProductAsync.when(
+    //   data: (cartProduct) {
+    //     cartProducts = cartProduct;
+    //   },
+    //   error: (error, stackTrace) => Text("$error"),
+    //   loading: () => const CircularProgressIndicator(),
+    // );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -258,6 +260,7 @@ class CartProductTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final product = cartProduct.product;
+    //final cartProviderNotifier = ref.read(cartProvider.notifier);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
       child: Row(
@@ -275,7 +278,16 @@ class CartProductTile extends ConsumerWidget {
             children: [
               IconButton(
                   onPressed: () {
-                    cartProduct.quantity++;
+                    try {
+                      FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('cart')
+                          .doc(cartProduct.product.id)
+                          .update({'quantity': FieldValue.increment(1)});
+                    } on Exception catch (e) {
+                      print(e);
+                    }
 
                     // ref.read(cartProvider.notifier).state = {
                     //   ...ref.read(cartProvider.notifier).state
@@ -285,19 +297,20 @@ class CartProductTile extends ConsumerWidget {
               IconButton(
                 onPressed: () async {
                   try {
-                    cartProduct.quantity--;
-                    if (cartProduct.quantity < 1) {
-                      ref.read(cartProvider).asData?.value;
-                      // ref.read(cartProvider.notifier).state = {
-                      //   ...ref.read(cartProvider.notifier).state
-                      //     ..removeWhere(
-                      //       (element) => product.id == element.product.id,
-                      //     )
-                      // };
+                    if (cartProduct.quantity > 1) {
+                      FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('cart')
+                          .doc(cartProduct.product.id)
+                          .update({'quantity': FieldValue.increment(-1)});
                     } else {
-                      // ref.read(cartProvider.notifier).state = {
-                      //   ...ref.read(cartProvider.notifier).state
-                      // };
+                      FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('cart')
+                          .doc(cartProduct.product.id)
+                          .delete();
                     }
                   } on Exception catch (e) {
                     log(e.toString());

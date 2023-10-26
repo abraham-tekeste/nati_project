@@ -44,6 +44,7 @@ dependencies:
   flutter_stripe: ^9.4.0
   firebase_auth: ^4.9.0
   firebase_ui_auth: ^1.8.0
+  firebase_ui_firestore: ^1.5.12
 
 dev_dependencies:
   flutter_test:
