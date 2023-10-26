@@ -20,7 +20,7 @@ class Product {
     return Product(
       id: snapshot.id,
       name: json['name'] ?? 'Unknown product',
-      price: 0,
+      price: json['price'] ?? 0,
       images:
           json['images'] is Iterable ? List<String>.from(json['images']) : [],
     );

@@ -18,24 +18,6 @@ final cartProvider = StreamProvider<Set<CartProduct>>((ref) {
       .toSet());
 });
 
-// class CartNotifier extends Notifier<Set<Product>> {
-//   @override
-//   build() {
-//     final cartProducts = <Product>{};
-//     final query = FirebaseFirestore.instance
-//         .collection("cart")
-//         .snapshots()
-//         .map((s) => s.docs.map((d) => Product.fromFireStore(d)));
-
-//     cartProducts.addAll(query as Iterable<Product>);
-//     return cartProducts;
-//   }
-// }
-
-// final favouritesProvider = StateProvider<List<Product>>((ref) {
-//   return []; // 0xmdkmnklwlkeflkw [kdms, sndk]
-// });
-
 final isSelectedAsFavouriteProvider = StateProvider.family((ref, arg) {
   final favorites = ref.watch(favoritesProvider);
 
@@ -75,7 +57,7 @@ final priceProvider = StateProvider<double>((ref) {
 
   double sum = 0;
   for (var e in cartProducts) {
-    sum = sum + e.product.priceValue * e.quantity;
+    sum = sum + e.product.price * e.quantity;
   }
   return sum;
 });

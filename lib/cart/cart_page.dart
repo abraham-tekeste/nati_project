@@ -34,16 +34,6 @@ class CartPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          // Expanded(
-          //   child: ListView.builder(
-          //     padding: const EdgeInsets.all(16),
-          //     itemCount: cartProducts.length,
-          //     itemBuilder: (context, i) {
-          //       return CartProductTile(cartProducts.elementAt(i));
-          //     },
-          //   ),
-          // ),
-
           cartProductsAsync.when(data: (cartProducts) {
             return SizedBox(
               height: 368,
@@ -113,7 +103,12 @@ class CartPage extends ConsumerWidget {
                           ),
                           TextInOrderDetails(
                               labelName: "Total items",
-                              labelValue: cartProducts.length.toString()),
+                              labelValue: ref
+                                  .read(cartProvider)
+                                  .asData!
+                                  .value
+                                  .length
+                                  .toString()),
                           const TextInOrderDetails(
                               labelName: "Shipping Charges", labelValue: "0.0"),
                           const TextInOrderDetails(
@@ -272,7 +267,7 @@ class CartProductTile extends ConsumerWidget {
             children: [
               Text(product.name),
               Text(cartProduct.quantity.toString()),
-              Text(product.priceValue.toString()),
+              Text(product.price.toString()),
             ],
           ),
           Column(
@@ -281,6 +276,7 @@ class CartProductTile extends ConsumerWidget {
               IconButton(
                   onPressed: () {
                     cartProduct.quantity++;
+
                     // ref.read(cartProvider.notifier).state = {
                     //   ...ref.read(cartProvider.notifier).state
                     // };
@@ -291,6 +287,7 @@ class CartProductTile extends ConsumerWidget {
                   try {
                     cartProduct.quantity--;
                     if (cartProduct.quantity < 1) {
+                      ref.read(cartProvider).asData?.value;
                       // ref.read(cartProvider.notifier).state = {
                       //   ...ref.read(cartProvider.notifier).state
                       //     ..removeWhere(
