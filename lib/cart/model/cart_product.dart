@@ -22,7 +22,7 @@ class CartProduct {
   }
 
   @override
-  int get hashCode => Object.hash(product.id, product.name);
+  int get hashCode => Object.hash(product.id, product.name, quantity);
 
   // CartProduct copyWith({int? quantity}) {
   //   return CartProduct(
@@ -35,5 +35,10 @@ class CartProduct {
   @override
   bool operator ==(covariant CartProduct other) {
     return identical(this, other) || product.id == other.product.id;
+  }
+
+  @override
+  String toString() {
+    return "cartProduct (${product.name},$quantity)";
   }
 }

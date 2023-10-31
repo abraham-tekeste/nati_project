@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nati_project/cart/model/cart_product.dart';
@@ -72,19 +71,11 @@ class ProductTile extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () async {
-                  // ref.read(cartProvider.notifier).state = {
-                  //   ...ref.read(cartProvider.notifier).state
-                  //     ..add(CartProduct(product: product, quantity: 1))
-                  // };
-                  //FirebaseFirestore.instance.collection("cart").doc(product.id);
-                  //log(product.id);
-                  // print("inside icon button");
-                  // print(product.id);
-
                   try {
                     await createProductToFirebase(product);
                   } on Exception catch (e) {
-                    print(e);
+                    //print(e);
+                    log(e.toString());
                     // TODO
                   }
 
@@ -103,14 +94,11 @@ class ProductTile extends ConsumerWidget {
 }
 
 Future createProductToFirebase(Product product) async {
-  // final documentInCart =
-  // FirebaseFirestore.instance.collection("cart").doc(id).get;
-
   final cartProduct = CartProduct(product: product, quantity: 1).toFireStore();
   FirebaseFirestore.instance
-      .collection("users")
+      .collection("carts")
       .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection('cart')
+      .collection('cartProducts')
       .doc(product.id)
       .set(cartProduct, SetOptions(merge: true));
 }

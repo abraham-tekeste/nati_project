@@ -18,9 +18,7 @@ class CartPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    //final cartProducts = ref.watch(cartProvider);
-
-    final totalPrice = ref.watch(priceProvider);
+    // final cartProducts = ref.watch(cartProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -31,10 +29,10 @@ class CartPage extends ConsumerWidget {
           Expanded(
             child: FirestoreListView<CartProduct>(
               query: FirebaseFirestore.instance
-                  .collection("users")
+                  .collection("carts")
                   .doc(FirebaseAuth.instance.currentUser!.uid)
                   // .doc('W7UghHOBv4ZubklGmaj60oPW4tB3')
-                  .collection('cart')
+                  .collection('cartProducts')
                   .withConverter(
                     fromFirestore: CartProduct.fromFireStore,
                     toFirestore: (value, options) {
@@ -46,91 +44,110 @@ class CartPage extends ConsumerWidget {
               itemBuilder: (context, doc) {
                 Future(
                   () {
-                    ref.read(cartProvider.notifier).state = {
-                      ...ref.read(cartProvider),
-                      doc.data()
-                    };
+                    ref.read(cartProvider.notifier).addToSet(doc.data());
                   },
                 );
                 return CartProductTile(doc.data());
               },
             ),
           ),
-          Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.0),
-                  color: Colors.blue.shade50,
-                ),
-                constraints: const BoxConstraints(minHeight: 250),
-                margin: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Order Details",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
+          Consumer(
+            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+              return Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.blue.shade50,
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          TextInOrderDetails(
-                            labelName: "Total quantity",
-                            labelValue: ref
-                                .read(cartProvider)
-                                .fold(
-                                    0,
-                                    (previousValue, element) =>
-                                        previousValue + element.quantity)
-                                .toString(),
-                            //     cartProducts.when(data: (cartProducts) {
-                            //   return cartProducts
-                            //       .fold(
-                            //           0,
-                            //           (previousValue, element) =>
-                            //               previousValue + element.quantity)
-                            //       .toString();
-                            // }, error: (e, s) {
-                            //   return Text('$e').toString();
-                            // }, loading: () {
-                            //   return const CircularProgressIndicator()
-                            //       .toString();
-                            // })
+                    constraints: const BoxConstraints(minHeight: 250),
+                    margin: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Order Details",
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              )
+                            ],
                           ),
-                          TextInOrderDetails(
-                              labelName: "Total items",
-                              labelValue:
-                                  ref.read(cartProvider).length.toString()),
-                          const TextInOrderDetails(
-                              labelName: "Shipping Charges", labelValue: "0.0"),
-                          const TextInOrderDetails(
-                              labelName: "Total Tax", labelValue: "15%"),
-                          TextInOrderDetails(
-                              labelName: "Grand Total",
-                              labelValue: totalPrice.toString()),
-                        ],
-                      ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          child: const Column(
+                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              TotalQuantity(),
+                              TotalItems(),
+                              TextInOrderDetails(
+                                  labelName: "Shipping Charges",
+                                  labelValue: "0.0"),
+                              TextInOrderDetails(
+                                  labelName: "Total Tax", labelValue: "15%"),
+                              GrandTotal(),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              const CheckOutButton(),
-            ],
+                  ),
+                  const CheckOutButton(),
+                ],
+              );
+            },
           ),
         ],
       ),
     );
+  }
+}
+
+class TotalQuantity extends ConsumerWidget {
+  const TotalQuantity({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final quantity = ref
+        .watch(cartProvider)
+        .fold(0, (previousValue, element) => previousValue + element.quantity)
+        .toString();
+    return TextInOrderDetails(
+      labelName: "Total quantity",
+      labelValue: quantity,
+    );
+  }
+}
+
+class TotalItems extends ConsumerWidget {
+  const TotalItems({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final cartProductsLength = ref.watch(cartProvider).length;
+    return TextInOrderDetails(
+        labelName: "Total items", labelValue: cartProductsLength.toString());
+  }
+}
+
+class GrandTotal extends ConsumerWidget {
+  const GrandTotal({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final totalPrice = ref.watch(priceProvider);
+    return TextInOrderDetails(
+        labelName: "Grand Total", labelValue: totalPrice.toString());
   }
 }
 
@@ -142,14 +159,6 @@ class CheckOutButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final cartProducts = ref.watch(cartProvider);
-
-    // cartProductAsync.when(
-    //   data: (cartProduct) {
-    //     cartProducts = cartProduct;
-    //   },
-    //   error: (error, stackTrace) => Text("$error"),
-    //   loading: () => const CircularProgressIndicator(),
-    // );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -205,7 +214,7 @@ class CheckOutButton extends ConsumerWidget {
                       'productsId': cartProducts.map((e) => e.product.id),
                     });
 
-                    //ref.read(cartProvider.notifier).update((_) => {});
+                    ref.read(cartProvider.notifier).makeOrder();
 
                     checkOutSubscription.cancel();
                   }
@@ -221,7 +230,7 @@ class CheckOutButton extends ConsumerWidget {
   }
 }
 
-class TextInOrderDetails extends StatelessWidget {
+class TextInOrderDetails extends ConsumerWidget {
   const TextInOrderDetails({
     required this.labelName,
     required this.labelValue,
@@ -232,7 +241,7 @@ class TextInOrderDetails extends StatelessWidget {
   final String labelValue;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return Container(
       margin: const EdgeInsets.all(8),
       child: Row(
@@ -260,6 +269,7 @@ class CartProductTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final product = cartProduct.product;
+
     //final cartProviderNotifier = ref.read(cartProvider.notifier);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
@@ -270,7 +280,7 @@ class CartProductTile extends ConsumerWidget {
             children: [
               Text(product.name),
               Text(cartProduct.quantity.toString()),
-              Text(product.price.toString()),
+              Text(product.priceValue.toString()),
             ],
           ),
           Column(
@@ -280,35 +290,39 @@ class CartProductTile extends ConsumerWidget {
                   onPressed: () {
                     try {
                       FirebaseFirestore.instance
-                          .collection("users")
+                          .collection(FireStoreKeys.cartCollection)
                           .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .collection('cart')
+                          .collection('cartProducts')
                           .doc(cartProduct.product.id)
-                          .update({'quantity': FieldValue.increment(1)});
+                          .update(
+                        {'quantity': FieldValue.increment(1)},
+                      );
                     } on Exception catch (e) {
                       print(e);
                     }
-
-                    // ref.read(cartProvider.notifier).state = {
-                    //   ...ref.read(cartProvider.notifier).state
-                    // };
                   },
                   icon: const Icon(Icons.add)),
               IconButton(
                 onPressed: () async {
                   try {
+                    print("cartproduct quantity " + cartProduct.toString());
                     if (cartProduct.quantity > 1) {
                       FirebaseFirestore.instance
-                          .collection("users")
+                          .collection(FireStoreKeys.cartCollection)
                           .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .collection('cart')
+                          .collection('cartProducts')
                           .doc(cartProduct.product.id)
-                          .update({'quantity': FieldValue.increment(-1)});
+                          .update(
+                        {'quantity': FieldValue.increment(-1)},
+                      );
                     } else {
-                      FirebaseFirestore.instance
-                          .collection("users")
+                      ref
+                          .read(cartProvider.notifier)
+                          .removeCartProducts(product.id);
+                      await FirebaseFirestore.instance
+                          .collection(FireStoreKeys.cartCollection)
                           .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .collection('cart')
+                          .collection('cartProducts')
                           .doc(cartProduct.product.id)
                           .delete();
                     }
@@ -324,4 +338,8 @@ class CartProductTile extends ConsumerWidget {
       ),
     );
   }
+}
+
+class FireStoreKeys {
+  static final String cartCollection = "carts";
 }
