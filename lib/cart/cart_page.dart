@@ -11,6 +11,7 @@ import 'package:nati_project/auth/controllers/user_provider.dart';
 import 'package:nati_project/cart/model/cart_product.dart';
 
 import 'controllers/cart_provider.dart';
+import '../orders/orders_page.dart';
 
 // this is comment for test github
 class CartPage extends ConsumerWidget {
@@ -97,11 +98,37 @@ class CartPage extends ConsumerWidget {
                     ),
                   ),
                   const CheckOutButton(),
+                  const CheckOutOrdersButton(),
                 ],
               );
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CheckOutOrdersButton extends ConsumerWidget {
+  const CheckOutOrdersButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return const OrdersPage();
+            },
+          ));
+        },
+        style: ElevatedButton.styleFrom(minimumSize: const Size(300, 48)),
+        child: const Text(
+          "Go To Orders",
+          style: TextStyle(fontSize: 16),
+        ),
       ),
     );
   }

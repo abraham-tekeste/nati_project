@@ -39,13 +39,7 @@ class CartNotifier extends Notifier<Set<CartProduct>> {
     //print("index " + index.toString());
     state.remove(state.elementAt(index));
 
-    state = {
-      ...state
-      // ..removeWhere((element) {
-      //   print("${element.product.id}==$id:${element.product.id == id}");
-      //   return element.product.id == id;
-      // })
-    };
+    state = {...state};
     //print("after remove " + state.length.toString());
   }
 
