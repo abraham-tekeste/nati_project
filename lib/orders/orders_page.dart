@@ -125,6 +125,7 @@ class OrdersTile extends ConsumerWidget {
       leading: const CircleAvatar(
           backgroundImage: AssetImage("assets/images/areki.jpeg")),
       title: Text(cartProduct.product.name),
+      subtitle: const Text("Order # 304973765"),
       trailing: const Icon(Icons.navigate_next),
       onTap: () {
         Navigator.push(

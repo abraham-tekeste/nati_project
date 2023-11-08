@@ -39,6 +39,28 @@ class OrderDetailsPage extends ConsumerWidget {
       body: Column(
         children: [
           const OrderDetailTextWidget(),
+          const SizedBox(
+            height: 5,
+          ),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    "order #304973765",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "placed on 01-12-2022",
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           OrderWidget(cartProduct: cartProduct),
           const DeliveryDetails(),
         ],

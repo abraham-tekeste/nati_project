@@ -1,0 +1,8 @@
+flutter_native_splash:
+  color: "##FFFFFF"
+  color_dark: "#272727"
+  image: assets/images/flutter1.png
+  image_dark: assets/images/flutter1.png
+
+ 
+  web: false
