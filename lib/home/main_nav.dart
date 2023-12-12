@@ -18,6 +18,7 @@ class MainNav extends ConsumerWidget {
     final pageIndex = ref.watch(pageIndexProvider);
 
     return Scaffold(
+      // backgroundColor: Theme.of(context).primaryColor,
       body: IndexedStack(
         index: pageIndex,
         children: const [

@@ -19,16 +19,12 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     return Scaffold(
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text(
           "HOME",
-          style: TextStyle(
-              fontSize: 28.0, fontWeight: FontWeight.bold, color: tdBlack),
         ),
-        //backgroundColor: tdBGColor,
         actions: [
           IconButton(
             onPressed: () {

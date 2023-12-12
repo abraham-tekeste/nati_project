@@ -14,8 +14,8 @@ class DisplayProductsPage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final productsAsync = ref.watch(categoryProductsProvider(id));
     return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
-          elevation: 0.0,
           //leading: IconButton(onPressed: Navigator.of(context).pop(context), icon: const Icon(Icons.arrow_back),),
           title: Text(name),
         ),

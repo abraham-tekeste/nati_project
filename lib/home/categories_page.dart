@@ -15,13 +15,11 @@ class CategoriesPage extends ConsumerWidget {
     //final totalPrices=ref.watch(priceProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        elevation: 0.0,
-        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text(
           "Categories",
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
         ),
         //backgroundColor: tdBGColor,
       ),

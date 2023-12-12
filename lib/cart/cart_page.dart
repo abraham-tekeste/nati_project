@@ -23,6 +23,7 @@ class CartPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Cart'),
       ),
       body: Column(

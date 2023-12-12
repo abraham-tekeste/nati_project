@@ -10,15 +10,11 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Theme.of(context).primaryColor,
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        backgroundColor: Colors.white70,
-        elevation: 0.0,
-        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text(
           "MENU",
-          style: TextStyle(
-              fontSize: 28.0, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
       body: Container(

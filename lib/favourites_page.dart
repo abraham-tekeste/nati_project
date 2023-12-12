@@ -14,15 +14,11 @@ class FavouritesPage extends ConsumerWidget {
     //log('Loading');
 
     return Scaffold(
-      //backgroundColor: tdBGColor,
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        elevation: 0.0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text(
           'Favourites',
-          style: TextStyle(
-              fontSize: 28.0, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(

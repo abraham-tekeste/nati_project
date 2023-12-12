@@ -32,9 +32,10 @@ class OrderDetailsPage extends ConsumerWidget {
     // );e
 
     return Scaffold(
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text("Order Details"),
-        elevation: 0.0,
       ),
       body: Column(
         children: [

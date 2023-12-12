@@ -13,10 +13,14 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
-      ),
+      theme: ThemeData(),
+      // themeMode: ThemeMode.system,
+      // theme: TAppTheme.lightTheme,
+      // darkTheme: TAppTheme.darkTheme,
+      // theme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+      //   useMaterial3: true,
+      // ),
       home: const AuthGate(),
     );
   }
